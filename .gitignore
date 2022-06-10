@@ -1,6 +1,6 @@
 .DS_Store
 .cache
-frontend/sre/node_modules/
+frontend/sre/node_modules
 #/dist/
 
 # local env files
