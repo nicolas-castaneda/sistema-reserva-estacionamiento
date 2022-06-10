@@ -37,6 +37,28 @@ export default {
   methods: {
     submit: function (event) {
       event.preventDefault();
+      fetch("http://localhost:5000/usuario", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          DNI: this.DNI,
+          celular: this.Celular,
+          nombres: this.Nombres,
+          email: this.Email,
+          contrasena: this.Contrasena,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.success) {
+            this.$router.push("/login");
+          } else {
+            alert(data.message);
+          }
+        });
     },
     numericInput: function (event) {
       if (event.code.slice(0, 5) != "Digit") {

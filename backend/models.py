@@ -22,7 +22,7 @@ class Usuario(db.Model):
     correo = db.Column(db.String(50), nullable = False)
     contrasena = db.Column(db.String(256), nullable = False)
     estado = db.Column(db.String(3), nullable = False)
-    autos = db.relationship("Adb.uto")
+    autos = db.relationship("Auto")
     reservas = db.relationship("Reserva")
     
     def __init__(self, dni, celular, nombres, correo, contrasena, estado):
@@ -32,6 +32,19 @@ class Usuario(db.Model):
         self.correo = correo
         self.contrasena = contrasena
         self.estado = estado
+    
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'dni': self.dni,
+            'celular': self.celular,
+            'nombres': self.nombres,
+            'correo': self.correo
+        }
+    
 
 class Auto(db.Model):
     __tablename__ = "autos"
