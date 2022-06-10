@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-default">
+  <nav>
     <router-link to="/">Home</router-link>
     <span v-if="nombre">
       <h6 class="item left text" v-show="nombre"> Hola {{nombre}}!</h6>
