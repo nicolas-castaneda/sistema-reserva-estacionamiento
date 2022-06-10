@@ -1,12 +1,19 @@
 <template>
-  <NavBar></NavBar>
+  <NavBar :user="user"></NavBar>
   <router-view></router-view>
 </template>
 
 <script>
 import NavBar from './components/NavBar.vue'
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap"
 
 export default {
+  data() {
+    return {
+      user: {}
+    }
+  },
   components: {
     NavBar
   },
@@ -28,14 +35,13 @@ nav {
   padding: 30px;
 }
 
-nav a {
+.nav-link {
   margin: 15px;
   text-decoration: none;
   font-weight: bold;
   color: #EEEEEE;
 }
-
-nav a.router-link-exact-active {
-  color: #4ECCA3;
+.router-link-exact-active {
+  color: #4ECCA3 !important;
 }
 </style>
