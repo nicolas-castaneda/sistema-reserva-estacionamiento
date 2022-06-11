@@ -6,19 +6,45 @@
     <input type="password" placeholder="Contraseña" v-model="Contrasena" />
     <button v-on:click="submit">Login</button>
   </form>
+  <Alert :error="error"></Alert>
 </template>
 
 <script>
+import Alert from '../components/alert.vue'
+
 export default {
   data() {
     return {
       Correo: "",
       Contrasena: "",
+      error: "",
     };
+  },
+  components: {
+    Alert
   },
   methods: {
     submit: function (event) {
       event.preventDefault();
+      fetch("http://localhost:5000/session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          correo: this.Correo,
+          contrasena: this.Contrasena,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.success) {
+            this.$router.push("/");
+          } else {
+            this.error = data.message;
+          }
+        });
     },
   },
 };
@@ -84,5 +110,9 @@ button{
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
+}
+
+button:hover{
+    box-shadow: #4ECCA3 0 0 5px;
 }
 </style>

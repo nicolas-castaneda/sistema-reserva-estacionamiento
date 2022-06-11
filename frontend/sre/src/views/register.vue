@@ -1,42 +1,54 @@
 <template>
-  <form class="register">
+  <form class="register" novalidate v-on:submit="submit">
     <h3>Register</h3>
     <input
+      class="form-control shadow-none"
       type="text"
       placeholder="DNI"
       minlength="8"
       maxlength="8"
       v-model="DNI"
       v-on:keypress="numericInput"
+      required
     />
     <input
+      class="form-control shadow-none"
       type="text"
       placeholder="Celular"
       minlength="9"
       maxlength="9"
       v-model="Celular"
       v-on:keypress="numericInput"
+      required
     />
-    <input type="text" placeholder="Nombres" v-model="Nombres" />
-    <input type="email" placeholder="Correo electrónico" v-model="Email" />
-    <input type="password" placeholder="Contraseña" v-model="Contrasena" />
-    <button v-on:click="submit">Register</button>
+    <input class="form-control shadow-none" type="text" placeholder="Nombres" maxlength="50" v-model="Nombres" required/>
+    <input class="form-control shadow-none" type="email" placeholder="Correo electrónico" maxlength="50" v-model="Correo" required/>
+    <input class="form-control shadow-none" type="password" placeholder="Contraseña" minlength="5" maxlength="20" v-model="Contrasena" required/>
+    <button>Register</button>
   </form>
+  <Alert :error="error"></Alert>
 </template>
 <script>
+import Alert from '../components/alert.vue'
+
 export default {
   data() {
     return {
       DNI: "",
       Celular: "",
       Nombres: "",
-      Email: "",
+      Correo: "",
       Contrasena: "",
+      error: "",
     };
+  },
+  components: {
+    Alert
   },
   methods: {
     submit: function (event) {
       event.preventDefault();
+      this.error = "";
       fetch("http://localhost:5000/usuario", {
         method: "POST",
         headers: {
@@ -46,7 +58,7 @@ export default {
           DNI: this.DNI,
           celular: this.Celular,
           nombres: this.Nombres,
-          email: this.Email,
+          correo: this.Correo,
           contrasena: this.Contrasena,
         }),
       })
@@ -56,7 +68,7 @@ export default {
           if (data.success) {
             this.$router.push("/login");
           } else {
-            alert(data.message);
+            this.error = data.message;
           }
         });
     },
@@ -70,6 +82,7 @@ export default {
 </script>
 
 <style scoped>
+
 form{
     height: 520px;
     width: 400px;
@@ -108,17 +121,17 @@ input{
     display: block;
     height: 50px;
     width: 100%;
-    background-color: rgba(255,255,255,0.07);
+    background-color: rgba(255,255,255,0.07) !important;
     border-radius: 3px;
     padding: 0 10px;
     margin-top: 8px;
     font-size: 14px;
     font-weight: 300;
-    color: #EEEEEE;
+    color: #EEEEEE !important;
 
 }
 ::placeholder{
-    color: #EEEEEE;
+    color: #EEEEEE !important;
 }
 button{
     margin-top: 50px;
@@ -129,5 +142,8 @@ button{
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
+}
+button:hover{
+    box-shadow: #4ECCA3 0 0 5px;
 }
 </style>

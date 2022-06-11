@@ -39,10 +39,12 @@ class Usuario(db.Model):
 
     def format(self):
         return {
+            'idUsuario': self.idUsuario,
             'dni': self.dni,
             'celular': self.celular,
             'nombres': self.nombres,
-            'correo': self.correo
+            'correo': self.correo,
+            'estado': self.estado
         }
     
 
