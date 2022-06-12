@@ -1,26 +1,23 @@
 <template>
-    <div class="position-absolute bottom-0 start-50 translate-middle-x">
+  <div class="position-absolute bottom-0 start-50 translate-middle-x">
     <transition name="bounce">
-        <div class="container" v-show="error">
-            <div class="alert alert-danger">
-                <strong>Error!</strong> {{ error }}  
-            </div>
+      <div class="container" v-show="error">
+        <div class="alert alert-danger">
+          <strong>Error!</strong> {{ error }}
         </div>
+      </div>
     </transition>
-    </div>
+  </div>
 </template>
 
 <script>
-
 export default {
-    name: "error",
-    setup() {
-        
-    },
-    props: {
-        error: String
-    },
-}
+  name: "error",
+  setup() {},
+  props: {
+    error: String,
+  },
+};
 </script>
 
 <style scoped>

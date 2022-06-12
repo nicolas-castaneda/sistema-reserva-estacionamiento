@@ -1,26 +1,23 @@
 <template>
-  <NavBar :user="user['nombe']"></NavBar>
+  <NavBar :user="this.$store.state.user.nombres"></NavBar>
   <router-view></router-view>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue'
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.min.js"
-import "bootstrap/dist/js/bootstrap.bundle.min.js"
-import "bootstrap"
+import NavBar from "./components/NavBar.vue";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap";
 
 export default {
   data() {
     return {
-      user: {}
-    }
+    };
   },
   components: {
-    NavBar
+    NavBar,
   },
-  }
-
+};
 </script>
 
 <style>
@@ -29,7 +26,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #EEEEEE;
+  color: #eeeeee;
   background-color: #232931;
 }
 
@@ -41,9 +38,9 @@ nav {
   margin: 15px;
   text-decoration: none;
   font-weight: bold;
-  color: #EEEEEE;
+  color: #eeeeee;
 }
 .router-link-exact-active {
-  color: #4ECCA3 !important;
+  color: #4ecca3 !important;
 }
 </style>
