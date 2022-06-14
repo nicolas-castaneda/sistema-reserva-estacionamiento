@@ -17,6 +17,8 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app, max_age=10)
 
+    crear_estacionamientos()
+
     @app.after_request
     def after_request(response):
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
@@ -77,6 +79,18 @@ def create_app(test_config=None):
             'user': nuevo_usuario.format()
             }
         )
+
+    @app.route("/estacionamientos", methods=['GET'])
+    def get_estacionamientos():
+        lugaresEstacionamiento=[estacionamiento.format() for estacionamiento in Estacionamiento.query.order_by('idEstacionamiento').all()]
+
+        if len(lugaresEstacionamiento) == 0:
+                abort(404,'No hay estacionamientos')
+        return jsonify({
+                'success':True,
+                'estacionamientos':lugaresEstacionamiento,
+                'total_estacionamientos':len(lugaresEstacionamiento)
+        })
 
     @app.errorhandler(400)
     def bad_request(error):
