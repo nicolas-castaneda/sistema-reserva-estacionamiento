@@ -3,6 +3,7 @@
 __pycache__
 frontend/sre/node_modules
 virtualenv
+package-lock.json
 #/dist/
 
 # local env files
