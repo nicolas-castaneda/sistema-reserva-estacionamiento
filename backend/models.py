@@ -68,6 +68,7 @@ class Auto(db.Model):
         self.estado = estado
 
 
+
 class Estacionamiento(db.Model):
     __tablename__ = "estacionamientos"
     idEstacionamiento = db.Column(db.Integer, primary_key = True)
@@ -77,6 +78,12 @@ class Estacionamiento(db.Model):
     def __init__(self,  lugar, estadoRegistro):
         self.lugar = lugar
         self.estadoRegistro = estadoRegistro
+    def format(self):
+        return{
+            'idEstacionamiento':self.idEstacionamiento,
+            'lugar':self.lugar,
+            'estadoRegistro':self.estadoRegistro
+        }
 
 
 
