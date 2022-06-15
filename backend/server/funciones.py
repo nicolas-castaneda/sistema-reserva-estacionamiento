@@ -1,5 +1,6 @@
 
 import re
+from werkzeug.security import generate_password_hash
 from models import Usuario, Auto, Estacionamiento, Reserva, db
 
 def isemail(email):
@@ -73,3 +74,8 @@ def crear_estacionamientos():
             testEstacionamiento=Estacionamiento(lugar=lugar, estadoRegistro='DIS')
             db.session.add(testEstacionamiento)
             db.session.commit()
+
+def crear_persona():
+    testPersona=Usuario("75330321", "985013664", "Marco Antonio", "a@a.com", generate_password_hash("1234"), "REG")
+    db.session.add(testPersona)
+    db.session.commit()

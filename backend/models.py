@@ -68,6 +68,16 @@ class Auto(db.Model):
         self.color = color
         self.estado = estado
 
+    def format(self):
+        return {
+            'idUsuario': self.idUsuario,
+            'placa': self.placa,
+            'marca': self.marca,
+            'modelo': self.modelo,
+            'color': self.color,
+            'estado': self.estado
+        }
+
 
 
 class Estacionamiento(db.Model):

@@ -1,4 +1,5 @@
 from distutils.log import error
+import json
 from flask import (
     Flask,
     jsonify,
@@ -17,6 +18,7 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app, max_age=10)
 
+    crear_persona()
     crear_estacionamientos()
 
     @app.after_request
@@ -80,7 +82,7 @@ def create_app(test_config=None):
             }
         )
 
-    @app.route("/estacionamientos", methods=['GET'])
+    @app.route("/estacionamiento", methods=['GET'])
     def get_estacionamientos():
         lugaresEstacionamiento=[estacionamiento.format() for estacionamiento in Estacionamiento.query.order_by('idEstacionamiento').all()]
 
@@ -91,6 +93,20 @@ def create_app(test_config=None):
                 'estacionamientos':lugaresEstacionamiento,
                 'total_estacionamientos':len(lugaresEstacionamiento)
         })
+
+    @app.route("/auto/<usuario>", methods=['GET'])
+    def get_autos(usuario):
+        usuario = Usuario.query.filter_by(correo=usuario).first()
+        if not usuario or usuario is None:
+            abort(403,'Requiere cuenta para acceder a contenido')
+        idUsuario = usuario.idUsuario
+        autos = [auto.format() for auto in Auto.query.filter_by(idUsuario=idUsuario).order_by("idAuto").all()]
+        return jsonify({
+            'success':True,
+            'autos':autos,
+            'total_autos':len(autos)
+        })
+        
 
     @app.errorhandler(400)
     def bad_request(error):
@@ -107,6 +123,14 @@ def create_app(test_config=None):
             'error': 401,
             'message': 'Unauthorized' if not error.description else error.description
         }), 401
+
+    @app.errorhandler(403)
+    def forbidden(error):
+        return jsonify({
+            'success': False,
+            'error': 403,
+            'message': 'Forbidden' if not error.description else error.description
+        }), 403
     
     @app.errorhandler(404)
     def not_found(error):

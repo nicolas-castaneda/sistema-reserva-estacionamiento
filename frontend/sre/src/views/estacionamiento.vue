@@ -129,7 +129,7 @@ export default {
                 estacionamientos:null,
                 cantidadestacionamientos:null,
                 cantidadAutos:1,
-                alternarOpcionAutos:false
+                alternarOpcionAutos:true
             };
     },
     async created(){
