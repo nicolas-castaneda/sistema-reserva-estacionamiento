@@ -1,7 +1,7 @@
 <template>
   <div class="position-absolute bottom-0 start-50 translate-middle-x">
     <transition name="bounce">
-      <div class="container" v-show="error">
+      <div class="container" v-if="error">
         <div class="alert alert-danger">
           <strong>Error!</strong> {{ error }}
         </div>

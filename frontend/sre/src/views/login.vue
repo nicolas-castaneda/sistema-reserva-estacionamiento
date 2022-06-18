@@ -6,7 +6,7 @@
     <input type="password" placeholder="Contraseña" v-model="Contrasena" />
     <button v-on:click="submit">Login</button>
   </form>
-  <Alert :error="error"></Alert>
+  <Alert :error="error" v-if="!ok"></Alert>
 </template>
 
 <script>
@@ -17,7 +17,8 @@ export default {
     return {
       Correo: "",
       Contrasena: "",
-      error: "",
+      error: null,
+      ok: false,
     };
   },
   components: {
@@ -26,6 +27,7 @@ export default {
   methods: {
     submit: function (event) {
       event.preventDefault();
+      this.error = null;
       fetch("http://localhost:5000/session", {
         method: "POST",
         headers: {
@@ -40,10 +42,12 @@ export default {
         .then((data) => {
           console.log(data);
           if (data.success) {
+            this.ok = true;
             const user = {
               id: data.user.idUsuario,
               correo: data.user.correo,
               nombres: data.user.nombres,
+              token: data.token,
             }
             this.$store.commit("setUser", data.user);
             this.$router.push("/");

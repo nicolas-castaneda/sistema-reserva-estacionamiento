@@ -48,7 +48,7 @@
     />
     <button>Register</button>
   </form>
-  <Alert :error="error"></Alert>
+  <Alert :error="error" v-if="!ok"></Alert>
 </template>
 <script>
 import Alert from "../components/alert.vue";
@@ -61,7 +61,8 @@ export default {
       Nombres: "",
       Correo: "",
       Contrasena: "",
-      error: "",
+      error: null,
+      ok: false,
     };
   },
   components: {
@@ -70,7 +71,7 @@ export default {
   methods: {
     submit: function (event) {
       event.preventDefault();
-      this.error = "";
+      this.error = null
       fetch("http://localhost:5000/usuario", {
         method: "POST",
         headers: {
@@ -88,6 +89,7 @@ export default {
         .then((data) => {
           console.log(data);
           if (data.success) {
+            this.ok = true;
             this.$router.push("/login");
           } else {
             this.error = data.message;

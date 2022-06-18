@@ -4,8 +4,9 @@ export default createStore({
   state: {
     user:{
       id: null,
-      nombres: "",
-      correo: ""
+      nombres: null,
+      correo: null,
+      token: null,
     },
   },
   getters: {
