@@ -50,10 +50,6 @@ export default {
     margin:0;
 }
 
-body{
-    background: black;
-
-}
 div{
     color:white;
     margin:0.9%;
