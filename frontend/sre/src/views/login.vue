@@ -1,10 +1,11 @@
 <template>
-  <form class="login">
+  <form class="login"  v-on:submit="submit">
     <h3>Login</h3>
 
-    <input type="email" placeholder="Correo electrónico" v-model="Correo" />
-    <input type="password" placeholder="Contraseña" v-model="Contrasena" />
-    <button v-on:click="submit">Login</button>
+    <input class="form-control" type="email" placeholder="Correo electrónico" v-model="Correo" />
+    <input class="form-control" type="password" placeholder="Contraseña" v-model="Contrasena" />
+    <button>Login</button>
+    <p style="padding: 15px" >No tienes una cuenta? <router-link class="link-light" to="/register">Registrate</router-link></p>
   </form>
   <Alert :error="error" v-if="!ok"></Alert>
 </template>
@@ -99,16 +100,16 @@ input {
   display: block;
   height: 50px;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: rgba(255, 255, 255, 0.07) !important;
   border-radius: 3px;
   padding: 0 10px;
   margin-top: 8px;
   font-size: 14px;
   font-weight: 300;
-  color: #eeeeee;
+  color: #eeeeee !important;
 }
 ::placeholder {
-  color: #eeeeee;
+  color: #eeeeee !important;
 }
 button {
   margin-top: 50px;
@@ -120,7 +121,6 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
-
 button:hover {
   box-shadow: #4ecca3 0 0 5px;
 }

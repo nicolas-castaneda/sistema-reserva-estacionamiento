@@ -44,4 +44,8 @@ nav {
 .router-link-exact-active {
   color: #4ecca3 !important;
 }
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem #EEEEEE;
+}
 </style>
