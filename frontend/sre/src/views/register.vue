@@ -2,7 +2,7 @@
   <form class="register" novalidate v-on:submit="submit">
     <h3>Register</h3>
     <input
-      class="form-control shadow-none"
+      class="form-control"
       type="text"
       placeholder="DNI"
       minlength="8"
@@ -12,7 +12,7 @@
       required
     />
     <input
-      class="form-control shadow-none"
+      class="form-control"
       type="text"
       placeholder="Celular"
       minlength="9"
@@ -22,7 +22,7 @@
       required
     />
     <input
-      class="form-control shadow-none"
+      class="form-control"
       type="text"
       placeholder="Nombres"
       maxlength="50"
@@ -30,7 +30,7 @@
       required
     />
     <input
-      class="form-control shadow-none"
+      class="form-control"
       type="email"
       placeholder="Correo electrónico"
       maxlength="50"
@@ -38,7 +38,7 @@
       required
     />
     <input
-      class="form-control shadow-none"
+      class="form-control"
       type="password"
       placeholder="Contraseña"
       minlength="5"
@@ -48,7 +48,7 @@
     />
     <button>Register</button>
   </form>
-  <Alert :error="error"></Alert>
+  <Alert :error="error" v-if="!ok"></Alert>
 </template>
 <script>
 import Alert from "../components/alert.vue";
@@ -61,7 +61,8 @@ export default {
       Nombres: "",
       Correo: "",
       Contrasena: "",
-      error: "",
+      error: null,
+      ok: false,
     };
   },
   components: {
@@ -70,7 +71,7 @@ export default {
   methods: {
     submit: function (event) {
       event.preventDefault();
-      this.error = "";
+      this.error = null
       fetch("http://localhost:5000/usuario", {
         method: "POST",
         headers: {
@@ -88,6 +89,7 @@ export default {
         .then((data) => {
           console.log(data);
           if (data.success) {
+            this.ok = true;
             this.$router.push("/login");
           } else {
             this.error = data.message;
@@ -162,6 +164,8 @@ button {
   font-weight: 600;
   border-radius: 5px;
   cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease-in-out;
 }
 button:hover {
   box-shadow: #4ecca3 0 0 5px;

@@ -28,6 +28,7 @@ export default {
   text-align: center;
   color: #eeeeee;
   background-color: #232931;
+  min-width: 550px;
 }
 
 nav {
@@ -42,5 +43,9 @@ nav {
 }
 .router-link-exact-active {
   color: #4ecca3 !important;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem #EEEEEE;
 }
 </style>

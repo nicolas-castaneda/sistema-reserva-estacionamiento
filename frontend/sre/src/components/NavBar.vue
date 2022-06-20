@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
       <button
         class="navbar-toggler"
@@ -27,7 +27,7 @@
             >
               Reservas
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <ul class="dropdown-menu animate slideIn" aria-labelledby="navbarDropdown">
               <li>
                 <router-link to="/principal" class="dropdown-item"
                   >Principal</router-link
@@ -57,9 +57,11 @@
             <router-link to="/login" class="nav-link">Login</router-link>
           </li>
         </ul>
-        <span class="navbar-text" v-if="user">
-          Hola <strong>{{ user }}</strong>!!!
-        </span>
+        <Transition name="slide-fade">
+          <span class="navbar-text" v-if="user">
+            Hola <strong>{{ user }}</strong>!!!
+          </span>
+        </Transition>
       </div>
     </div>
   </nav>
@@ -78,3 +80,71 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@media (min-width: 768px) {
+  .animate {
+    animation-duration: 0.3s;
+    -webkit-animation-duration: 0.3s;
+    animation-fill-mode: both;
+    -webkit-animation-fill-mode: both;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-2rem);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0rem);
+    opacity: 1;
+  }
+
+  0% {
+    transform: translateY(-2rem);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes slideIn {
+  0% {
+    -webkit-transform: transform;
+    -webkit-opacity: 0;
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    -webkit-opacity: 1;
+  }
+
+  0% {
+    -webkit-transform: translateY(-2rem);
+    -webkit-opacity: 0;
+  }
+}
+
+.slideIn {
+  -webkit-animation-name: slideIn;
+  animation-name: slideIn;
+}
+
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+</style>

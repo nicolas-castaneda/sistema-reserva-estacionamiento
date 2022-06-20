@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import check_password_hash
 import os
 
 database_path=f"postgresql://postgres:{os.getenv('POST_PASS')}@localhost:5432/sre"
@@ -25,6 +26,17 @@ class Usuario(db.Model):
     estado = db.Column(db.String(3), nullable = False)
     autos = db.relationship("Auto")
     reservas = db.relationship("Reserva")
+    
+    @classmethod
+    def authenticate(cls, **kwargs):
+        correo = kwargs.get('correo')
+        contrasena = kwargs.get('contrasena')
+        print(correo, contrasena)
+        user = cls.query.filter_by(correo=correo).first()
+        if not user or not check_password_hash(user.contrasena, contrasena):
+            return None
+        return user
+        
     
     def __init__(self, dni, celular, nombres, correo, contrasena, estado):
         self.dni = dni
