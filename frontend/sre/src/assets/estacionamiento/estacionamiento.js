@@ -10,6 +10,18 @@ export async function obtenerEstacionamientos(){
     return respuesta;
 }
 
+export async function obtenerAutoUsuario(usuario){
+    let respuesta = await
+    fetch('http://127.0.0.1:5000/auto/'+usuario,{
+        method:'GET'
+    }).then(function (response) {
+        return response.json();
+    }).then(function (responseJson){  
+        return responseJson;
+    }).catch(error => console.log(error));
+    return respuesta;
+}
+
 export function calcularCosto(fechaInicio, fechaFin){
     if(fechaInicio != null && fechaFin != null){
         let valorFechaFin = Date.parse(fechaFin)

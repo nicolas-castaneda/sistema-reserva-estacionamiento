@@ -15,7 +15,7 @@
             <div class="pantalla min-vh-100">
                 <div class="grupoEstacionamiento">
                     <div v-for="(estacionamiento, index) in estacionamientos" :key="index" class="elementoEstacionamiento"> 
-                        <button v-bind:class="['lugarEstacionamiento', estacionamiento.estadoRegistro]" v-bind:data-bs-toggle="[estacionamiento.estadoRegistro=='DIS' ? 'modal':'']" type="button" data-bs-target="#modal-escoger" v-on:click="iniciarFormulario(estacionamiento.lugar)">
+                        <button v-bind:class="['lugarEstacionamiento', estacionamiento.estadoRegistro]" v-bind:data-bs-toggle="[estacionamiento.estadoRegistro=='DIS' ? 'modal':'']" type="button" data-bs-target="#modal-escoger" v-on:click="[iniciarFormulario(estacionamiento.lugar),autosUsuario()]">
                             {{estacionamiento.lugar}}
                         </button>
                     </div>
@@ -39,11 +39,10 @@
                                         <input v-model="finReservaFormulario" type="datetime-local" class="form-control" id="fechaFin" required>
                                     </div>
                                 </div>
-
-                                <div v-if="cantidadAutos>0" id="autosDisponibles">
-                                    <button v-if="alternarOpcionAutos" id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos">Carros disponibles</button>
-                                    <button v-else id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos">Añadir auto</button>
-                                    <div v-if="alternarOpcionAutos">
+                                <div id="autosDisponibles">
+                                    <button v-if="alternarOpcionAutos && cantidadAutosDisponibles > 0" id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos">Carros disponibles</button>
+                                    <button v-else-if="alternarOpcionAutos==false && cantidadAutosDisponibles > 0" id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos">Añadir auto</button>
+                                    <div v-if="alternarOpcionAutos || cantidadAutosDisponibles == 0">
                                         <div class="mb-3" id="contenedorPlaca">
                                             <label for="placa" class="col-form-label">Placa</label>
                                             <input type="text" v-model="placaFormulario" class="form-control" id="placa" required>
@@ -61,7 +60,7 @@
                                             <input type="text" v-model="colorFormulario" class="form-control" id="color" required>
                                         </div>
                                     </div>
-                                    <div v-else>
+                                    <div v-else-if="alternarOpcionAutos==false && cantidadAutosDisponibles > 0">
                                         <div id="contenedorAutosDisponibles" class="mb-3">
                                             <select class="form-select" id="seleccionarAutosDisponibles" required>
                                                 <option value=null>Elige un auto</option>
@@ -70,26 +69,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else id="autosDisponibles">
-                                    <div class="mb-3" id="contenedorPlaca">
-                                        <label for="placa" class="col-form-label">Placa</label>
-                                        <input type="text" v-model="placaFormulario" class="form-control" id="placa" required>
-                                    </div>
-                                    <div class="mb-3" id="contenedorMarca">
-                                        <label for="marca" class="col-form-label">Marca</label>
-                                        <input type="text" v-model="marcaFormulario" class="form-control" id="marca" required>
-                                    </div>
-                                    <div class="mb-3" id="contenedorModelo">
-                                        <label for="modelo" class="col-form-label">Modelo</label>
-                                        <input type="text" v-model="modeloFormulario" class="form-control" id="modelo" required>
-                                    </div>
-                                    <div class="mb-3" id="contenedorColor">
-                                        <label for="color" class="col-form-label">Color</label>
-                                        <input type="text" v-model="colorFormulario" class="form-control" id="color" required>
-                                    </div>
-                                </div>
-
-                                
                                 <div class="mb-3">
                                     <label for="costoReserva" class="col-form-label">Costo de reserva</label>
                                     <input type="number" class="form-control" :placeholder="costoReservaFormulario" :value="costoReservaFormulario" id="costoReserva" readonly required>
@@ -119,6 +98,7 @@ export default {
     name: 'app-estacionamiento',
     data(){
             return{
+                usuario:'a@a.com',
                 lugarEstacionamientoFormulario:'--',
                 inicioReservaFormulario:null,
                 finReservaFormulario:null,
@@ -128,8 +108,9 @@ export default {
                 colorFormulario:'',
                 estacionamientos:null,
                 cantidadestacionamientos:null,
-                cantidadAutos:1,
-                alternarOpcionAutos:true
+                autos:[],
+                cantidadAutos:0,
+                alternarOpcionAutos:false
             };
     },
     async created(){
@@ -146,6 +127,11 @@ export default {
     methods:{
         iniciarFormulario: function(lugar){
             this.lugarEstacionamientoFormulario = lugar;
+        },
+        autosUsuario:async function(){
+            let respuesta = await estacionamiento.obtenerAutoUsuario(this.usuario);
+            this.autos = respuesta['autos'];
+            this.cantidadAutos = respuesta['total_autos'];
         }
     },
     computed:{
@@ -154,6 +140,12 @@ export default {
         },
         costoReservaFormulario(){
             return estacionamiento.calcularCosto(this.inicioReservaFormulario, this.finReservaFormulario) * 5/100;
+        },
+        cantidadAutosDisponibles(){
+            return this.autos.filter(auto => auto.estado == 'DIS').length;
+        },
+        autosDisponibles(){
+            return this.autos.filter(auto => auto.estado == 'DIS');
         }
     },
     watch:{
