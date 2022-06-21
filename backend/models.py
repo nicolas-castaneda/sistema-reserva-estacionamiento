@@ -80,6 +80,33 @@ class Auto(db.Model):
         self.color = color
         self.estado = estado
 
+    def insert(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+            return self.idAuto
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+    def update(self):
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
     def format(self):
         return {
             'idUsuario': self.idUsuario,
@@ -101,6 +128,15 @@ class Estacionamiento(db.Model):
     def __init__(self,  lugar, estadoRegistro):
         self.lugar = lugar
         self.estadoRegistro = estadoRegistro
+
+    def update(self):
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
     def format(self):
         return{
             'idEstacionamiento':self.idEstacionamiento,
@@ -121,6 +157,33 @@ class Reserva(db.Model):
     costoReserva = db.Column(db.Float, nullable=False)
     costoTotal = db.Column(db.Float, nullable=False)
     estadoRegistro = db.Column(db.String(3), nullable=False)
+
+    def insert(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+            return self.idReserva
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+    def update(self):
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
 
     def __init__(self, idUsuario, idEstacionamiento, idAuto, inicioReserva, finReserva, costoReserva, costoTotal, estadoRegistro):
         self.idUsuario = idUsuario

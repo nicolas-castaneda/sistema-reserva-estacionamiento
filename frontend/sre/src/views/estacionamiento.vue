@@ -24,7 +24,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                                                     
-                            <form id="formularioReserva" class="modal-body">
+                            <form id="formularioReserva" class="modal-body"  v-on:submit="submit">
                                 <div class="mb-3">
                                     <label for="lugar" class="col-form-label">Lugar de estacionamiento</label>
                                     <input class="form-control" type="text" :placeholder="lugarEstacionamientoFormulario" id="lugar" :value="lugarEstacionamientoFormulario" readonly required>
@@ -40,8 +40,8 @@
                                     </div>
                                 </div>
                                 <div id="autosDisponibles">
-                                    <button v-if="alternarOpcionAutos && cantidadAutosDisponibles > 0" id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos">Carros disponibles</button>
-                                    <button v-else-if="alternarOpcionAutos==false && cantidadAutosDisponibles > 0" id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos">Añadir auto</button>
+                                    <button v-if="alternarOpcionAutos && cantidadAutosDisponibles > 0" id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos;placaFormulario=''">Carros disponibles</button>
+                                    <button v-else-if="alternarOpcionAutos==false && cantidadAutosDisponibles > 0" id="cambiarAnadirDisponible" type="button" @click="alternarOpcionAutos = !alternarOpcionAutos;placaFormulario=''">Añadir auto</button>
                                     <div v-if="alternarOpcionAutos || cantidadAutosDisponibles == 0">
                                         <div class="mb-3" id="contenedorPlaca">
                                             <label for="placa" class="col-form-label">Placa</label>
@@ -62,9 +62,9 @@
                                     </div>
                                     <div v-else-if="alternarOpcionAutos==false && cantidadAutosDisponibles > 0">
                                         <div id="contenedorAutosDisponibles" class="mb-3">
-                                            <select class="form-select" id="seleccionarAutosDisponibles" required>
-                                                <option value=null>Elige un auto</option>
-                                                <!-- Aqui van los autos -->
+                                            <select v-model="placaFormulario" class="form-select" id="seleccionarAutosDisponibles" required>
+                                                <option disabled value="">Seleccione un vehiculo</option>
+                                                <option v-for="(auto, index) in autosDisponibles" :key="index" :value="auto.placa">{{auto.placa}}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -77,12 +77,11 @@
                                     <label for="costoTotal" class="col-form-label">Costo total</label>
                                     <input type="number" class="form-control" :placeholder="costoTotalFormulario" :value="costoTotalFormulario" id="costoTotal" readonly required>
                                 </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary" form="formularioReserva">Realizar reserva</button>
+                                </div>
                             </form>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" form="formularioReserva">Realizar reserva</button>
-                            </div>
-                            
                         </div>
                     </div>
                 </div>
@@ -93,11 +92,13 @@
 
 <script>
 import * as estacionamiento from '../assets/estacionamiento/estacionamiento.js'
+import { Modal } from 'bootstrap'
 
 export default {
     name: 'app-estacionamiento',
     data(){
             return{
+                
                 usuario:'a@a.com',
                 lugarEstacionamientoFormulario:'--',
                 inicioReservaFormulario:null,
@@ -110,7 +111,8 @@ export default {
                 cantidadestacionamientos:null,
                 autos:[],
                 cantidadAutos:0,
-                alternarOpcionAutos:false
+                alternarOpcionAutos:false,
+                error:null
             };
     },
     async created(){
@@ -127,11 +129,53 @@ export default {
     methods:{
         iniciarFormulario: function(lugar){
             this.lugarEstacionamientoFormulario = lugar;
+            this.alternarOpcionAutos = true;
+            this.placaFormulario='';
         },
         autosUsuario:async function(){
             let respuesta = await estacionamiento.obtenerAutoUsuario(this.usuario);
             this.autos = respuesta['autos'];
             this.cantidadAutos = respuesta['total_autos'];
+        },
+        submit: function(event){
+            event.preventDefault();
+            this.error=null
+            fetch('http://127.0.0.1:5000/reserva',{
+                method:"POST",
+                body:JSON.stringify({
+                    'usuario':this.usuario,
+                    'lugar':this.lugarEstacionamientoFormulario,
+                    'inicioReserva':this.inicioReservaFormulario,
+                    'finReserva':this.finReservaFormulario,
+                    'placa':this.placaFormulario,
+                    'marca':this.marcaFormulario,
+                    'modelo':this.modeloFormulario,
+                    'color':this.colorFormulario,
+                    'costoReserva':this.costoReservaFormulario,
+                    'costoTotal':this.costoTotalFormulario,
+                    'opcion':this.alternarOpcionAutos
+                }),
+                headers:{
+                    'Content-Type':'application/json'
+                }
+                
+            }).then((response) => response.json())
+            .then((data)=>{
+                if(data.success){
+                    this.lugarEstacionamientoFormulario='--';
+                    this.inicioReservaFormulario=null;
+                    this.finReservaFormulario=null;
+                    this.placaFormulario='';
+                    this.marcaFormulario='';
+                    this.modeloFormulario='';
+                    this.colorFormulario='';
+                    const modalFormulario= Modal.getInstance(document.getElementById('modal-escoger'));
+                    modalFormulario.hide(); 
+                }else{
+                    this.error=data.message;
+                    console.log(this.error)
+                }
+            }) 
         }
     },
     computed:{
