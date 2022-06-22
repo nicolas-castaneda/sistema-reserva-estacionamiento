@@ -266,7 +266,103 @@ def create_app(test_config=None):
             'success':True,
             'created':idReserva,
         })
-        
+
+    @app.route("/autos/<usuario>", methods=['POST'])
+    def create_auto(usuario):
+        data = request.get_json()
+        usuario = Usuario.query.filter_by(correo=usuario).first()
+        idUsuario = usuario.idUsuario
+        if not idUsuario:
+            abort(400, 'No se recibio un usuario')
+        if not data:
+            abort(400, 'No se recibieron datos')
+        placa = data.get('placa',None)
+        if msg:= v_placa(placa):
+            abort(400, msg)
+        marca = data.get('marca',None)
+        if msg:= v_marca(marca):
+            abort(400, msg)
+        modelo = data.get('modelo',None)
+        if msg:= v_modelo(modelo):
+            abort(400, msg)
+        color = data.get('color',None)
+        if msg:= v_color(color):
+            abort(400, msg)
+        try:
+            auto = Auto(idUsuario=idUsuario,placa=placa, marca=marca, modelo=modelo, color=color, estado='DIS')
+            newAutoId = auto.insert()
+            return jsonify({
+                'success':True,
+                'created':newAutoId,
+            })
+        except Exception as e:
+            print(e)
+            abort(500)
+
+    @app.route("/autos/<idAuto>", methods=['DELETE'])
+    def delete_auto():
+        data = request.get_json()
+        if not data:
+            abort(400, 'No se recibieron datos')
+        idAuto = data.get('idAuto',None)
+        if not idAuto:
+            abort(400, 'No se recibio un idAuto')
+        auto = Auto.query.filter_by(idAuto=idAuto).first()
+        if not auto:
+            abort(400, 'No se encontro el auto')
+        auto.delete()
+        return jsonify({
+            'success':True,
+            'deleted':idAuto,
+        })
+    
+    @app.route("/autos/<idAuto>", methods=['PATCH'])
+    def update_auto():
+        data = request.get_json()
+        if not data:
+            abort(400, 'No se recibieron datos')
+        idAuto = data.get('idAuto',None)
+        if not idAuto:
+            abort(400, 'No se recibio un idAuto')
+        marca = data.get('marca',None)
+        if msg:= v_marca(marca):
+            abort(400, msg)
+        modelo = data.get('modelo',None)
+        if msg:= v_modelo(modelo):
+            abort(400, msg)
+        color = data.get('color',None)
+        if msg:= v_color(color):
+            abort(400, msg)
+
+        auto = Auto.query.filter_by(idAuto=idAuto).first()
+        if not auto:
+            abort(400, 'No se encontro el auto')
+        auto.marca = marca
+        auto.modelo = modelo
+        auto.color = color
+        auto.update()
+        return jsonify({
+            'success':True,
+            'updated':idAuto,
+        })
+
+    @app.route("/reservas/<idReserva>", methods=['DELETE'])
+    def delete_reserva():
+        data = request.get_json()
+        if not data:
+            abort(400, 'No se recibieron datos')
+        idReserva = data.get('idReserva',None)
+        if not idReserva:
+            abort(400, 'No se recibio un idReserva')
+        reserva = Reserva.query.filter_by(idReserva=idReserva).first()
+        if not reserva:
+            abort(400, 'No se encontro la reserva')
+        reserva.delete()
+        return jsonify({
+            'success':True,
+            'deleted':idReserva,
+        })
+
 
     @app.errorhandler(400)
     def bad_request(error):

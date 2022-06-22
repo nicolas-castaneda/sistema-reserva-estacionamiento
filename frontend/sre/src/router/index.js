@@ -24,6 +24,17 @@ const routes = [
     name: "estacionamiento",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/estacionamiento.vue"),
+  },{
+    path: "/autos",
+    name: "autos",
+    component: () =>
+      import ( /* webpackChunkName: "about" */"..views/autos.vue"),
+  },
+  {
+    path: "/reservas",
+    name: "reservas",
+    component: () =>
+      import (/* webpackChunkName: "about" */"..views/reservas.vue"),
   }
 ];
 
