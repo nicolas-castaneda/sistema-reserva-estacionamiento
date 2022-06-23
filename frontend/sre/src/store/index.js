@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    user:{
+    user: {
       id: null,
       nombres: null,
       correo: null,
@@ -15,12 +15,12 @@ export default createStore({
     },
     getUserId(state) {
       return state.user.id;
-    }
+    },
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
-    }
+    },
   },
   actions: {},
   modules: {},

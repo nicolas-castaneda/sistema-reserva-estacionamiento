@@ -1,11 +1,26 @@
 <template>
-  <form class="login"  v-on:submit="submit">
-    <h3>Login</h3>
+  <form class="login" v-on:submit="submit">
+    <transition name="slide-fade" appear>
+      <h3>Login</h3>
+    </transition>
 
-    <input class="form-control" type="email" placeholder="Correo electrónico" v-model="Correo" />
-    <input class="form-control" type="password" placeholder="Contraseña" v-model="Contrasena" />
+    <input
+      class="form-control"
+      type="email"
+      placeholder="Correo electrónico"
+      v-model="Correo"
+    />
+    <input
+      class="form-control"
+      type="password"
+      placeholder="Contraseña"
+      v-model="Contrasena"
+    />
     <button>Login</button>
-    <p style="padding: 15px" >No tienes una cuenta? <router-link class="link-light" to="/register">Registrate</router-link></p>
+    <p style="padding: 15px">
+      No tienes una cuenta?
+      <router-link class="link-light" to="/register">Registrate</router-link>
+    </p>
   </form>
   <Alert :error="error" v-if="!ok"></Alert>
 </template>
@@ -44,12 +59,12 @@ export default {
           console.log(data);
           if (data.success) {
             this.ok = true;
-            const user = {
+            /*const user = {
               id: data.user.idUsuario,
               correo: data.user.correo,
               nombres: data.user.nombres,
               token: data.token,
-            }
+            };*/
             this.$store.commit("setUser", data.user);
             this.$router.push("/");
           } else {

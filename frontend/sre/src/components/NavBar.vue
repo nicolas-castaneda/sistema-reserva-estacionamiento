@@ -27,7 +27,10 @@
             >
               Reservas
             </a>
-            <ul class="dropdown-menu animate slideIn" aria-labelledby="navbarDropdown">
+            <ul
+              class="dropdown-menu animate slideIn"
+              aria-labelledby="navbarDropdown"
+            >
               <li>
                 <router-link to="/principal" class="dropdown-item"
                   >Principal</router-link
@@ -59,7 +62,8 @@
         </ul>
         <Transition name="slide-fade">
           <span class="navbar-text" v-if="user">
-            Hola <strong>{{ user }}</strong>!!!
+            Hola <strong>{{ user }}</strong
+            >!!!
           </span>
         </Transition>
       </div>
