@@ -96,20 +96,4 @@ img {
   border-radius: 5px;
   margin: 0.9%;
 }
-
-body {
-  font-size: 1.2rem;
-  line-height: 1.6em;
-  margin: 0;
-}
-
-.header {
-  background: #f5f5f5;
-  padding: 1em;
-  float: end;
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-}
 </style>
