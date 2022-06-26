@@ -1,244 +1,209 @@
 <template>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Estacionamiento</title>
-  </head>
-  <body class="align-items-center">
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
-      <symbol
-        id="exclamation-triangle-fill"
-        fill="currentColor"
-        viewBox="0 0 16 16"
+  <div class="pantalla min-vh-100">
+    <div class="grupoEstacionamiento">
+      <div
+        v-for="(estacionamiento, index) in estacionamientos"
+        :key="index"
+        class="elementoEstacionamiento"
       >
-        <path
-          d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-        />
-      </symbol>
-    </svg>
-    <main role="main" class="container m-auto row justify-content-center">
-      <div class="pantalla min-vh-100">
-        <div class="grupoEstacionamiento">
-          <div
-            v-for="(estacionamiento, index) in estacionamientos"
-            :key="index"
-            class="elementoEstacionamiento"
-          >
-            <button
-              v-bind:class="[
-                'lugarEstacionamiento',
-                estacionamiento.estadoRegistro,
-              ]"
-              v-bind:data-bs-toggle="[
-                estacionamiento.estadoRegistro == 'DIS' ? 'modal' : '',
-              ]"
-              type="button"
-              data-bs-target="#modal-escoger"
-              v-on:click="
-                [iniciarFormulario(estacionamiento.lugar), autosUsuario()]
-              "
-            >
-              {{ estacionamiento.lugar }}
-            </button>
-          </div>
-        </div>
-        <div class="modal fade" id="modal-escoger">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <form
-                id="formularioReserva"
-                class="modal-body"
-                v-on:submit="submit"
+        <button
+          v-bind:class="[
+            'lugarEstacionamiento',
+            estacionamiento.estadoRegistro,
+          ]"
+          v-bind:data-bs-toggle="[
+            estacionamiento.estadoRegistro == 'DIS' ? 'modal' : '',
+          ]"
+          type="button"
+          data-bs-target="#modal-escoger"
+          v-on:click="
+            [iniciarFormulario(estacionamiento.lugar), autosUsuario()]
+          "
+        >
+          {{ estacionamiento.lugar }}
+        </button>
+      </div>
+    </div>
+    <div class="modal fade" id="modal-escoger">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="formularioReserva" class="modal-body" v-on:submit="submit">
+            <div class="mb-3">
+              <label for="lugar" class="col-form-label"
+                >Lugar de estacionamiento</label
               >
-                <div class="mb-3">
-                  <label for="lugar" class="col-form-label"
-                    >Lugar de estacionamiento</label
-                  >
-                  <input
-                    class="form-control"
-                    type="text"
-                    :placeholder="lugarEstacionamientoFormulario"
-                    id="lugar"
-                    :value="lugarEstacionamientoFormulario"
-                    readonly
-                    required
-                  />
-                </div>
-                <div class="mb-3 d-flex">
-                  <div class="m-auto">
-                    <label for="fechaInicio" class="col-form-label"
-                      >Fecha inicio</label
-                    >
-                    <input
-                      v-model="inicioReservaFormulario"
-                      type="datetime-local"
-                      class="form-control"
-                      id="fechaInicio"
-                      required
-                    />
-                  </div>
-                  <div class="m-auto">
-                    <label for="fechaFin" class="col-form-label"
-                      >Fecha final</label
-                    >
-                    <input
-                      v-model="finReservaFormulario"
-                      type="datetime-local"
-                      class="form-control"
-                      id="fechaFin"
-                      required
-                    />
-                  </div>
-                </div>
-                <div id="autosDisponibles">
-                  <button
-                    v-if="alternarOpcionAutos && cantidadAutosDisponibles > 0"
-                    id="cambiarAnadirDisponible"
-                    type="button"
-                    @click="
-                      alternarOpcionAutos = !alternarOpcionAutos;
-                      placaFormulario = '';
-                    "
-                  >
-                    Carros disponibles
-                  </button>
-                  <button
-                    v-else-if="
-                      alternarOpcionAutos == false &&
-                      cantidadAutosDisponibles > 0
-                    "
-                    id="cambiarAnadirDisponible"
-                    type="button"
-                    @click="
-                      alternarOpcionAutos = !alternarOpcionAutos;
-                      placaFormulario = '';
-                    "
-                  >
-                    Añadir auto
-                  </button>
-                  <div
-                    v-if="alternarOpcionAutos || cantidadAutosDisponibles == 0"
-                  >
-                    <div class="mb-3" id="contenedorPlaca">
-                      <label for="placa" class="col-form-label">Placa</label>
-                      <input
-                        type="text"
-                        v-model="placaFormulario"
-                        class="form-control"
-                        id="placa"
-                        required
-                      />
-                    </div>
-                    <div class="mb-3" id="contenedorMarca">
-                      <label for="marca" class="col-form-label">Marca</label>
-                      <input
-                        type="text"
-                        v-model="marcaFormulario"
-                        class="form-control"
-                        id="marca"
-                        required
-                      />
-                    </div>
-                    <div class="mb-3" id="contenedorModelo">
-                      <label for="modelo" class="col-form-label">Modelo</label>
-                      <input
-                        type="text"
-                        v-model="modeloFormulario"
-                        class="form-control"
-                        id="modelo"
-                        required
-                      />
-                    </div>
-                    <div class="mb-3" id="contenedorColor">
-                      <label for="color" class="col-form-label">Color</label>
-                      <input
-                        type="text"
-                        v-model="colorFormulario"
-                        class="form-control"
-                        id="color"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div
-                    v-else-if="
-                      alternarOpcionAutos == false &&
-                      cantidadAutosDisponibles > 0
-                    "
-                  >
-                    <div id="contenedorAutosDisponibles" class="mb-3">
-                      <select
-                        v-model="placaFormulario"
-                        class="form-select"
-                        id="seleccionarAutosDisponibles"
-                        required
-                      >
-                        <option disabled value="">
-                          Seleccione un vehiculo
-                        </option>
-                        <option
-                          v-for="(auto, index) in autosDisponibles"
-                          :key="index"
-                          :value="auto.placa"
-                        >
-                          {{ auto.placa }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="costoReserva" class="col-form-label"
-                    >Costo de reserva</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    :placeholder="costoReservaFormulario"
-                    :value="costoReservaFormulario"
-                    id="costoReserva"
-                    readonly
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="costoTotal" class="col-form-label"
-                    >Costo total</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    :placeholder="costoTotalFormulario"
-                    :value="costoTotalFormulario"
-                    id="costoTotal"
-                    readonly
-                    required
-                  />
-                </div>
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cerrar
-                  </button>
-                  <button
-                    type="submit"
-                    class="btn btn-primary"
-                    form="formularioReserva"
-                  >
-                    Realizar reserva
-                  </button>
-                </div>
-              </form>
+              <input
+                class="form-control"
+                type="text"
+                :placeholder="lugarEstacionamientoFormulario"
+                id="lugar"
+                :value="lugarEstacionamientoFormulario"
+                readonly
+                required
+              />
             </div>
-          </div>
+            <div class="mb-3 d-flex">
+              <div class="m-auto">
+                <label for="fechaInicio" class="col-form-label"
+                  >Fecha inicio</label
+                >
+                <input
+                  v-model="inicioReservaFormulario"
+                  type="datetime-local"
+                  class="form-control"
+                  id="fechaInicio"
+                  required
+                />
+              </div>
+              <div class="m-auto">
+                <label for="fechaFin" class="col-form-label">Fecha final</label>
+                <input
+                  v-model="finReservaFormulario"
+                  type="datetime-local"
+                  class="form-control"
+                  id="fechaFin"
+                  required
+                />
+              </div>
+            </div>
+            <div id="autosDisponibles">
+              <button
+                v-if="alternarOpcionAutos && cantidadAutosDisponibles > 0"
+                id="cambiarAnadirDisponible"
+                type="button"
+                @click="
+                  alternarOpcionAutos = !alternarOpcionAutos;
+                  placaFormulario = '';
+                "
+              >
+                Carros disponibles
+              </button>
+              <button
+                v-else-if="
+                  alternarOpcionAutos == false && cantidadAutosDisponibles > 0
+                "
+                id="cambiarAnadirDisponible"
+                type="button"
+                @click="
+                  alternarOpcionAutos = !alternarOpcionAutos;
+                  placaFormulario = '';
+                "
+              >
+                Añadir auto
+              </button>
+              <div v-if="alternarOpcionAutos || cantidadAutosDisponibles == 0">
+                <div class="mb-3" id="contenedorPlaca">
+                  <label for="placa" class="col-form-label">Placa</label>
+                  <input
+                    type="text"
+                    v-model="placaFormulario"
+                    class="form-control"
+                    id="placa"
+                    required
+                  />
+                </div>
+                <div class="mb-3" id="contenedorMarca">
+                  <label for="marca" class="col-form-label">Marca</label>
+                  <input
+                    type="text"
+                    v-model="marcaFormulario"
+                    class="form-control"
+                    id="marca"
+                    required
+                  />
+                </div>
+                <div class="mb-3" id="contenedorModelo">
+                  <label for="modelo" class="col-form-label">Modelo</label>
+                  <input
+                    type="text"
+                    v-model="modeloFormulario"
+                    class="form-control"
+                    id="modelo"
+                    required
+                  />
+                </div>
+                <div class="mb-3" id="contenedorColor">
+                  <label for="color" class="col-form-label">Color</label>
+                  <input
+                    type="text"
+                    v-model="colorFormulario"
+                    class="form-control"
+                    id="color"
+                    required
+                  />
+                </div>
+              </div>
+              <div
+                v-else-if="
+                  alternarOpcionAutos == false && cantidadAutosDisponibles > 0
+                "
+              >
+                <div id="contenedorAutosDisponibles" class="mb-3">
+                  <select
+                    v-model="placaFormulario"
+                    class="form-select"
+                    id="seleccionarAutosDisponibles"
+                    required
+                  >
+                    <option disabled value="">Seleccione un vehiculo</option>
+                    <option
+                      v-for="(auto, index) in autosDisponibles"
+                      :key="index"
+                      :value="auto.placa"
+                    >
+                      {{ auto.placa }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="costoReserva" class="col-form-label"
+                >Costo de reserva</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                :placeholder="costoReservaFormulario"
+                :value="costoReservaFormulario"
+                id="costoReserva"
+                readonly
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="costoTotal" class="col-form-label">Costo total</label>
+              <input
+                type="number"
+                class="form-control"
+                :placeholder="costoTotalFormulario"
+                :value="costoTotalFormulario"
+                id="costoTotal"
+                readonly
+                required
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                form="formularioReserva"
+              >
+                Realizar reserva
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </main>
-  </body>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -370,10 +335,6 @@ export default {
 </script>
 
 <style scoped>
-* {
-  font-family: "Roboto", sans-serif;
-}
-
 .titulo {
   color: white;
   text-align: center;

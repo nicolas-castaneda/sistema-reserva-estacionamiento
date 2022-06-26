@@ -32,7 +32,7 @@
               aria-labelledby="navbarDropdown"
             >
               <li>
-                <router-link to="/principal" class="dropdown-item"
+                <router-link to="/estacionamiento" class="dropdown-item"
                   >Principal</router-link
                 >
               </li>
@@ -86,6 +86,12 @@ export default {
     return {
       current_url: window.location.pathname,
     };
+  },
+  mounted() {
+    this.token = this.$store.state.user.token;
+    if (this.token !== null) {
+      console.log(this.token);
+    }
   },
   props: {
     user: String,
