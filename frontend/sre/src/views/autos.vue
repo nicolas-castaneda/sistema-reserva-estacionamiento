@@ -24,7 +24,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr :v-for="auto in autos">
+        <tr v-for="auto in autos" :key="auto.placa">
           <td scope="col">{{ auto.placa }}</td>
           <td>{{ auto.marca }}</td>
           <td>{{ auto.modelo }}</td>
@@ -155,9 +155,6 @@
 </template>
 
 <script>
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
-
 export default {
   name: "autos",
   data() {

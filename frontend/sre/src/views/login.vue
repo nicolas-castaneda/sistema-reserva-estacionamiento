@@ -59,14 +59,15 @@ export default {
           console.log(data);
           if (data.success) {
             this.ok = true;
-            /*const user = {
+            const user = {
               id: data.user.idUsuario,
               correo: data.user.correo,
               nombres: data.user.nombres,
               token: data.token,
-            };*/
-            this.$store.commit("setUser", data.user);
+            };
+            this.$store.commit("setUser", user);
             this.$router.push("/");
+            console.log(this.$store.getters.getUser);
           } else {
             this.error = data.message;
           }

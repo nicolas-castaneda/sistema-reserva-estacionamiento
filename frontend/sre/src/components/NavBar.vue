@@ -50,7 +50,15 @@
             </ul>
           </li>
           <li class="nav-item" v-if="user">
-            <router-link to="/logout" class="nav-link">Logout</router-link>
+            <a
+              id="logout"
+              @click="
+                this.$store.commit('logout');
+                this.$router.push('/');
+              "
+              class="nav-link"
+              >Logout</a
+            >
           </li>
 
           <li class="nav-item" v-if="!user">
@@ -80,7 +88,7 @@ export default {
     };
   },
   props: {
-    user: Object,
+    user: String,
   },
 };
 </script>
@@ -134,10 +142,6 @@ export default {
   animation-name: slideIn;
 }
 
-/*
-  Enter and leave animations can use different
-  durations and timing functions.
-*/
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }
@@ -150,5 +154,12 @@ export default {
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+#logout {
+  cursor: pointer;
+}
+#logout:hover {
+  color: rgb(235, 62, 62) !important;
 }
 </style>

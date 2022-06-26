@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr :v-for="reserva in reservas">
+        <tr v-for="reserva in reservas" :key="reserva.key">
           <td>{{ reserva[2] }}</td>
           <td>{{ reserva[0].inicioReserva }}</td>
           <td>{{ reserva[0].finReserva }}</td>
@@ -38,14 +38,11 @@
 </template>
 
 <script>
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
-
 export default {
   name: "Reservas",
   data() {
     return {
-      reservas: null,
+      reservas: [],
     };
   },
   methods: {
