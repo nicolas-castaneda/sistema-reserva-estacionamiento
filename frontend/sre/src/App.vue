@@ -28,6 +28,7 @@ export default {
   text-align: center;
   color: #eeeeee;
   background-color: #232931;
+  min-width: 550px;
 }
 
 nav {

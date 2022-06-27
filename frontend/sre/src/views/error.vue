@@ -35,6 +35,7 @@
 </template>
 
 <script>
+/*
 export default {
   name: 'app-home',
   data(){
@@ -43,12 +44,12 @@ export default {
     }
   }
 }
-/*
+*/
         function devolverInicio(){
             document.getElementById('Home').click();
         }
         setInterval(devolverInicio, 5000);
-        */
+  
 </script>
 
 <style >
