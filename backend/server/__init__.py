@@ -6,6 +6,7 @@ from flask import (
     current_app,
     jsonify,
     abort,
+    render_template,
     request
 )
 from flask_cors import CORS
@@ -15,7 +16,7 @@ from models import setup_db, Usuario, Auto, Estacionamiento, Reserva
 
 import jwt
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from server.funciones import *
 
 def token_required(f):
@@ -89,8 +90,8 @@ def create_app(test_config=None):
         token = jwt.encode({
             'id': user.idUsuario,
             'correo': user.correo,
-            'iat': datetime.datetime.utcnow(),
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
         }, current_app.config['SECRET_KEY'])
         
         return jsonify({
@@ -267,37 +268,37 @@ def create_app(test_config=None):
             'created':idReserva,
         })
 
-    @app.route("/autos/<usuario>", methods=['POST'])
-    def create_auto(usuario):
-        data = request.get_json()
-        usuario = Usuario.query.filter_by(correo=usuario).first()
-        idUsuario = usuario.idUsuario
-        if not idUsuario:
-            abort(400, 'No se recibio un usuario')
-        if not data:
-            abort(400, 'No se recibieron datos')
-        placa = data.get('placa',None)
-        if msg:= v_placa(placa):
-            abort(400, msg)
-        marca = data.get('marca',None)
-        if msg:= v_marca(marca):
-            abort(400, msg)
-        modelo = data.get('modelo',None)
-        if msg:= v_modelo(modelo):
-            abort(400, msg)
-        color = data.get('color',None)
-        if msg:= v_color(color):
-            abort(400, msg)
-        try:
-            auto = Auto(idUsuario=idUsuario,placa=placa, marca=marca, modelo=modelo, color=color, estado='DIS')
-            newAutoId = auto.insert()
-            return jsonify({
-                'success':True,
-                'created':newAutoId,
-            })
-        except Exception as e:
-            print(e)
-            abort(500)
+    # @app.route("/autos/<usuario>", methods=['POST'])
+    # def create_auto(usuario):
+    #     data = request.get_json()
+    #     usuario = Usuario.query.filter_by(correo=usuario).first()
+    #     idUsuario = usuario.idUsuario
+    #     if not idUsuario:
+    #         abort(400, 'No se recibio un usuario')
+    #     if not data:
+    #         abort(400, 'No se recibieron datos')
+    #     placa = data.get('placa',None)
+    #     if msg:= v_placa(placa):
+    #         abort(400, msg)
+    #     marca = data.get('marca',None)
+    #     if msg:= v_marca(marca):
+    #         abort(400, msg)
+    #     modelo = data.get('modelo',None)
+    #     if msg:= v_modelo(modelo):
+    #         abort(400, msg)
+    #     color = data.get('color',None)
+    #     if msg:= v_color(color):
+    #         abort(400, msg)
+    #     try:
+    #         auto = Auto(idUsuario=idUsuario,placa=placa, marca=marca, modelo=modelo, color=color, estado='DIS')
+    #         newAutoId = auto.insert()
+    #         return jsonify({
+    #             'success':True,
+    #             'created':newAutoId,
+    #         })
+    #     except Exception as e:
+    #         print(e)
+    #         abort(500)
 
     @app.route("/autos/<idAuto>", methods=['DELETE'])
     def delete_auto():

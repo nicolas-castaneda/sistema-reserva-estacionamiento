@@ -1,51 +1,55 @@
 <template>
   <form class="register" novalidate v-on:submit="submit">
-    <h3>Register</h3>
-    <input
-      class="form-control"
-      type="text"
-      placeholder="DNI"
-      minlength="8"
-      maxlength="8"
-      v-model="DNI"
-      v-on:keypress="numericInput"
-      required
-    />
-    <input
-      class="form-control"
-      type="text"
-      placeholder="Celular"
-      minlength="9"
-      maxlength="9"
-      v-model="Celular"
-      v-on:keypress="numericInput"
-      required
-    />
-    <input
-      class="form-control"
-      type="text"
-      placeholder="Nombres"
-      maxlength="50"
-      v-model="Nombres"
-      required
-    />
-    <input
-      class="form-control"
-      type="email"
-      placeholder="Correo electrónico"
-      maxlength="50"
-      v-model="Correo"
-      required
-    />
-    <input
-      class="form-control"
-      type="password"
-      placeholder="Contraseña"
-      minlength="5"
-      maxlength="20"
-      v-model="Contrasena"
-      required
-    />
+    <transition name="slide-fade" appear>
+      <h3>Register</h3>
+    </transition>
+    <div>
+      <input
+        class="form-control"
+        type="text"
+        placeholder="DNI"
+        minlength="8"
+        maxlength="8"
+        v-model="DNI"
+        v-on:keypress="numericInput"
+        required
+      />
+      <input
+        class="form-control"
+        type="text"
+        placeholder="Celular"
+        minlength="9"
+        maxlength="9"
+        v-model="Celular"
+        v-on:keypress="numericInput"
+        required
+      />
+      <input
+        class="form-control"
+        type="text"
+        placeholder="Nombres"
+        maxlength="50"
+        v-model="Nombres"
+        required
+      />
+      <input
+        class="form-control"
+        type="email"
+        placeholder="Correo electrónico"
+        maxlength="50"
+        v-model="Correo"
+        required
+      />
+      <input
+        class="form-control"
+        type="password"
+        placeholder="Contraseña"
+        minlength="5"
+        maxlength="20"
+        v-model="Contrasena"
+        required
+      />
+    </div>
     <button>Register</button>
   </form>
   <Alert :error="error" v-if="!ok"></Alert>
@@ -71,7 +75,7 @@ export default {
   methods: {
     submit: function (event) {
       event.preventDefault();
-      this.error = null
+      this.error = null;
       fetch("http://localhost:5000/usuario", {
         method: "POST",
         headers: {

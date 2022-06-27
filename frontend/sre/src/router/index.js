@@ -19,12 +19,20 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/register.vue"),
   },
+
+  {
+    path: "/:pathMatch(.*)*",
+    name: "error_404",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/error_404.vue"),
+  },
   {
     path: "/estacionamiento",
     name: "estacionamiento",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/estacionamiento.vue"),
-  },{
+  },
+  {
     path: "/autos",
     name: "autos",
     component: () =>
