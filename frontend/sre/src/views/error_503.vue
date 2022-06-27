@@ -12,7 +12,8 @@
           <h1>Servicio no disponible</h1>
           <br />
           <p>
-            El servicio que está solicitando no está disponible en este momento. Vuelva intentar más tarde
+            El servicio que está solicitando no está disponible en este momento.
+            Vuelva intentar más tarde
           </p>
           <p>
             Se le redirigirá a la página principal en 10 segundos. <br />Dele
@@ -23,7 +24,11 @@
         </div>
         <div class="imagenes col-sm-6">
           <div>
-            <img src="../assets/error503.jpg" class="img-fluid" alt="Imagen 1" />
+            <img
+              src="../assets/error503.jpg"
+              class="img-fluid"
+              alt="Imagen 1"
+            />
           </div>
         </div>
       </div>

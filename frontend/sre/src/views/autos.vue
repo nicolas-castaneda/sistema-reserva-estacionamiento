@@ -180,7 +180,8 @@ export default {
             color: color,
             estado: estado,
           };
-          fetch("/autos/insert", {
+          // this.$store.state.user.id
+          fetch("http://127.0.0.1:5000/autos/insert", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
