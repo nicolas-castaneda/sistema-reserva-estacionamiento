@@ -40,7 +40,7 @@ export default {
     name: 'reservas',
     methods : {
         deleteReserva(id){
-            fetch('/api/reservas/'+id, {
+            fetch('/reservas/'+id, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
