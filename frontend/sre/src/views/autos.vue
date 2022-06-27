@@ -1,5 +1,5 @@
 <template>
-  <div class="container p-5 shadow-lg">
+  <div class="container p-5 shadow-lg bg-body rounded">
     <!-- boton para agregar autos -->
     <button
       type="button"
@@ -159,15 +159,7 @@ export default {
   name: "autos",
   data() {
     return {
-      autos: [
-        {
-          placa: "",
-          marca: "",
-          modelo: "",
-          color: "",
-          estado: "",
-        },
-      ],
+      autos: [],
     };
   },
   methods: {
