@@ -39,17 +39,17 @@
 
 <script>
 export default {
-    name: 'reservas',
-    methods : {
-        deleteReserva(id){
-            fetch('/reservas/'+id, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-        }
-    }
+  name: "reservas",
+  methods: {
+    deleteReserva(id) {
+      fetch("/reservas/" + id, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+  },
 };
 </script>
 

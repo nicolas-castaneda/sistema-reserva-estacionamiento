@@ -24,7 +24,11 @@
         </div>
         <div class="imagenes col-sm-6">
           <div>
-            <img src="../assets/Error_500.jpg" class="img-fluid" alt="Imagen 1" />
+            <img
+              src="../assets/Error_500.jpg"
+              class="img-fluid"
+              alt="Imagen 1"
+            />
           </div>
         </div>
       </div>

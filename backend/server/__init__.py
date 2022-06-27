@@ -153,7 +153,7 @@ def create_app(test_config=None):
             'total_autos':len(autos)
         })
 
-    @app.route("/auto/<usuario>", methods=['POST'])
+    @app.route("/autos/<usuario>", methods=['POST'])
     def create_auto(usuario):
         data = request.get_json()
         usuario = Usuario.query.filter_by(correo=usuario).first()
