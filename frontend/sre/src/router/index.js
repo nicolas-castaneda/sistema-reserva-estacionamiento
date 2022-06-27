@@ -24,7 +24,25 @@ const routes = [
     path: "/:pathMatch(.*)*",
     name: "error_404",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/error.vue"),
+      import(/* webpackChunkName: "about" */ "../views/error_404.vue"),
+  },
+  {
+    path: "/estacionamiento",
+    name: "estacionamiento",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/estacionamiento.vue"),
+  },
+  {
+    path: "/autos",
+    name: "autos",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/autos.vue"),
+  },
+  {
+    path: "/reservas",
+    name: "reservas",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/reservas.vue"),
   },
 ];
 
