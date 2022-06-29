@@ -37,3 +37,8 @@ class TestSREApi(unittest.TestCase):
         self.assertIn('celular', data['user'])
         self.assertIn('correo', data['user'])
         self.assertIn('dni', data['user'])
+
+    def home_test(self):
+        res = self.client().get('/')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
