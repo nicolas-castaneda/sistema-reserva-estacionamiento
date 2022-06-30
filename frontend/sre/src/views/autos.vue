@@ -25,7 +25,7 @@
       </thead>
       <tbody>
         <tr v-for="auto in autos" :key="auto.placa">
-          <td scope="col">{{ auto.placa }}</td>
+          <td>{{ auto.placa }}</td>
           <td>{{ auto.marca }}</td>
           <td>{{ auto.modelo }}</td>
           <td>{{ auto.color }}</td>
@@ -155,12 +155,29 @@
 </template>
 
 <script>
+import * as autos from "../assets/autos/autos.js";
 export default {
   name: "autos",
   data() {
     return {
-      autos: [],
+      autos: {},
     };
+  },
+  async created() {
+    let idUsuario = this.$store.state.user.id;
+    console.log(idUsuario);
+    let token = this.$store.state.user.token;
+    console.log(token);
+    let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+    console.log(respuesta);
+    // this.autos = respuesta["estacionamientos"];
+    // this.cantidadestacionamientos = respuesta["total_estacionamientos"];
+    // let scopeself = this;
+    // setInterval(async function () {
+    //   let respuesta = await estacionamiento.obtenerEstacionamientos();
+    //   scopeself.estacionamientos = respuesta["estacionamientos"];
+    //   scopeself.cantidadestacionamientos = respuesta["total_estacionamientos"];
+    // }, 10000);
   },
   methods: {
     insertAuto() {
@@ -174,14 +191,14 @@ export default {
           const color = document.getElementById("insertColor").value;
           const estado = "DIS";
           const data = {
+            idUsuario: this.$store.state.user.id,
             placa: placa,
             marca: marca,
             modelo: modelo,
             color: color,
             estado: estado,
           };
-          // this.$store.state.user.id
-          fetch("http://127.0.0.1:5000/autos/insert", {
+          fetch("http://localhost:5000/autos/insert", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -207,7 +224,7 @@ export default {
             modelo: modelo,
             color: color,
           };
-          fetch("/autos/update/" + id, {
+          fetch("http://localhost:5000/autos/update", {
             method: "PUT",
             body: JSON.stringify(data),
             headers: {
@@ -223,7 +240,7 @@ export default {
       const data = {
         idAuto: id,
       };
-      fetch("/autos/delete/" + id, {
+      fetch("http://localhost:5000/autos/delete", {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {
