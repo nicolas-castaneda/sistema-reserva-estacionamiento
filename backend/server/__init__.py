@@ -38,11 +38,11 @@ def token_required(f):
 
         try:
             token = auth_headers[1]
-            data = jwt.decode(token, current_app.config['SECRET_KEY'])
-            user = Usuario.query.filter_by(email=data['correo']).first()
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            user = Usuario.query.filter_by(correo=data['correo']).first()
             if not user:
-                raise RuntimeError('User not found')
-            return f(user, *args, **kwargs)
+                abort(401, 'User not found')
+            return f(user)
         except jwt.ExpiredSignatureError:
             abort(401, expired_msg) # 401 is Unauthorized HTTP status code
         except (jwt.InvalidTokenError, Exception) as e:
@@ -63,15 +63,18 @@ def create_app(test_config=None):
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS,UPDATE')
         return response
     
     
     @app.route('/usuario', methods=['GET'])
     def get_usuarios():
         users = Usuario.query.all()
-        return jsonify([user.format() for user in users])
+        return jsonify({'success': True,
+                        'users':[user.format() for user in users],
+                        'count': len(users)
+                        })
     
     @app.route('/session', methods=['POST'])
     def login():
@@ -83,21 +86,31 @@ def create_app(test_config=None):
         if msg:= v_contrasena(contrasena, True):
             abort(400, msg)
             
-        user = Usuario.authenticate(**datos)
-        if not user:
-            abort(401, 'Usuario o contraseña incorrectos')
-        
+        informacion = v_login(correo, contrasena)
+        if not informacion['success']:
+            abort(401, informacion['message'])
+        user = informacion['user']
         token = jwt.encode({
             'id': user.idUsuario,
             'correo': user.correo,
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, current_app.config['SECRET_KEY'])
+        }, current_app.config['SECRET_KEY'],
+        algorithm='HS256')
         
         return jsonify({
             'success': True,
             'user': user.format(),
             'token': token
+        })
+    
+    @app.route('/session', methods=['PATCH'])
+    @token_required
+    def session_update(user):
+        return jsonify({
+            'success': True,
+            'time': datetime.utcnow(),
+            'user': user.format()
         })
     
     @app.route('/usuario', methods=['POST'])
