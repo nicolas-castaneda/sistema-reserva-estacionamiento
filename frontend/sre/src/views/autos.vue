@@ -156,6 +156,8 @@
 
 <script>
 import * as autos from "../assets/autos/autos.js";
+import { Modal } from "bootstrap";
+
 export default {
   name: "autos",
   data() {
@@ -165,12 +167,9 @@ export default {
   },
   async created() {
     let idUsuario = this.$store.state.user.id;
-    console.log(idUsuario);
     let token = this.$store.state.user.token;
-    console.log(token);
     let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
-    console.log(respuesta);
-    // this.autos = respuesta["estacionamientos"];
+    this.autos = respuesta["autos"];
     // this.cantidadestacionamientos = respuesta["total_estacionamientos"];
     // let scopeself = this;
     // setInterval(async function () {
@@ -181,6 +180,7 @@ export default {
   },
   methods: {
     insertAuto() {
+      let scopeself = this;
       document
         .getElementById("formularioinsertAuto")
         .addEventListener("submit", (e) => {
@@ -206,8 +206,18 @@ export default {
             },
           })
             .then((res) => res.json())
-            .catch((error) => console.error("Error:", error))
-            .then((response) => console.log("Success:", response));
+            .then(async function () {
+              console.log(scopeself);
+              let idUsuario = scopeself.$store.state.user.id;
+              let token = scopeself.$store.state.user.token;
+              let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+              scopeself.autos = respuesta["autos"];
+              const modalFormulario = Modal.getInstance(
+                document.getElementById("modalinsertAuto")
+              );
+              modalFormulario.hide();
+            })
+            .catch((error) => console.error("Error:", error));
         });
     },
     updateAuto(id) {

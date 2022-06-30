@@ -23,7 +23,6 @@ def token_required(f):
     @wraps(f)
     def _verify(*args, **kwargs):
         auth_headers = request.headers.get('Authorization', '').split()
-
         invalid_msg = {
             'message': 'Invalid token. Registeration and / or authentication required',
             'authenticated': False
@@ -156,10 +155,10 @@ def create_app(test_config=None):
     @app.route("/autos/<idUsuario>", methods=['GET'])
     @token_required
     def get_autos(usuario):
+        print(usuario)
         if not usuario or usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
-        console.log("id",idUsuario)
         autos = [auto.format() for auto in Auto.query.filter_by(idUsuario=idUsuario).order_by("idAuto").all()]
         return jsonify({
             'success':True,
