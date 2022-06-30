@@ -1,7 +1,7 @@
 
 import re
 from datetime import datetime
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from models import Usuario, Auto, Estacionamiento, Reserva, db
 
 def isemail(email):
@@ -49,6 +49,15 @@ def v_correo(correo, get_user=False):
         return "El correo ya existe"
     
     return None
+
+def v_login(correo, contrasena):
+    user = Usuario.query.filter_by(correo=correo).one_or_none()
+    if user is None:
+        return {'success': False, 'message': "El correo no existe"}
+    if not check_password_hash(user.contrasena, contrasena):
+        return {'success': False, 'message': "Contraseña incorrecta"}
+    return {'success': True, 'user': user}
+
 def v_contrasena(contrasena, get_user=False):
     if not contrasena:
         return "Envie una contraseña"

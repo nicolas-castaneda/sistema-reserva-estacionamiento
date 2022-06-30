@@ -27,17 +27,6 @@ class Usuario(db.Model):
     autos = db.relationship("Auto")
     reservas = db.relationship("Reserva")
     
-    @classmethod
-    def authenticate(cls, **kwargs):
-        correo = kwargs.get('correo')
-        contrasena = kwargs.get('contrasena')
-        print(correo, contrasena)
-        user = cls.query.filter_by(correo=correo).first()
-        if not user or not check_password_hash(user.contrasena, contrasena):
-            return None
-        return user
-        
-    
     def __init__(self, dni, celular, nombres, correo, contrasena, estado):
         self.dni = dni
         self.celular = celular
