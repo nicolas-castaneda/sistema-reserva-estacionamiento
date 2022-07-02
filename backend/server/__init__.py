@@ -156,7 +156,7 @@ def create_app(test_config=None):
     @token_required
     def get_autos(usuario):
         print(usuario)
-        if not usuario or usuario is None:
+        if usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
         autos = [auto.format() for auto in Auto.query.filter_by(idUsuario=idUsuario).order_by("idAuto").all()]
@@ -333,6 +333,23 @@ def create_app(test_config=None):
             'updated':placa
         })
 
+    @app.route("/reservas/<idUsuario>", methods=['GET'])
+    @token_required
+    def get_reservas(usuario):
+        print(usuario)
+        if usuario is None:
+            abort(403,'Requiere cuenta para acceder a contenido')
+        idUsuario = usuario.idUsuario
+        reservas = Reserva.query.filter_by(idUsuario=idUsuario).order_by('idReserva').all()
+        print(reservas)
+        reservas = [reserva.format() for reserva in reservas]
+        print(reservas)
+        return jsonify({
+            'success':True,
+            'reservas':reservas,
+            'total_reservas':len(reservas)
+        })
+    
     @app.route("/reservas/delete", methods=['DELETE'])
     def delete_reserva():
         data = request.get_json()

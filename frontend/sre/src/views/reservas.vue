@@ -17,18 +17,18 @@
       </thead>
       <tbody>
         <!-- Eliminar reserva -->
-        <tr v-for="reserva in reservas" :key="reserva.key">
-          <td>{{ reserva[2] }}</td>
-          <td>{{ reserva[0].inicioReserva }}</td>
-          <td>{{ reserva[0].finReserva }}</td>
-          <td>{{ reserva[1] }}</td>
-          <td>{{ reserva[0].costoReserva }}</td>
-          <td>{{ reserva[0].costoTotal }}</td>
-          <td>{{ reserva[0].estadoRegistro }}</td>
-          <td v-if="reserva[0].estadoRegistro == 'PEN'">
+        <tr v-for="reserva in reservas" :key="reserva.idReserva">
+          <td>{{ reserva.inicioReserva }}</td>
+          <td>{{ reserva.inicioReserva }}</td>
+          <td>{{ reserva.finReserva }}</td>
+          <td>{{ reserva.inicioReserva }}</td>
+          <td>{{ reserva.costoReserva }}</td>
+          <td>{{ reserva.costoTotal }}</td>
+          <td>{{ reserva.estadoRegistro }}</td>
+          <td v-if="reserva.estadoRegistro == 'PEN'">
             <button
               class="btn btn-warning"
-              @click="deleteReserva(reserva[0].id)"
+              @click="deleteReserva(reserva.idReserva)"
             >
               Anular
             </button>
@@ -52,6 +52,7 @@ export default {
     let idUsuario = this.$store.state.user.id;
     let token = this.$store.state.user.token;
     let respuesta = await reservas.getReservas(idUsuario, token);
+    console.log(respuesta);
     this.reservas = respuesta["reservas"];
   },
   methods: {
@@ -60,7 +61,7 @@ export default {
       const data = {
         idReserva: id,
       };
-      fetch("http://localhost:5000/reservas/delete" + id, {
+      fetch("http://localhost:5000/reservas/delete", {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {

@@ -148,6 +148,16 @@ class Reserva(db.Model):
     costoTotal = db.Column(db.Float, nullable=False)
     estadoRegistro = db.Column(db.String(3), nullable=False)
 
+    def __init__(self, idUsuario, idEstacionamiento, idAuto, inicioReserva, finReserva, costoReserva, costoTotal, estadoRegistro):
+        self.idUsuario = idUsuario
+        self.idEstacionamiento = idEstacionamiento
+        self.idAuto = idAuto
+        self.inicioReserva = inicioReserva
+        self.finReserva = finReserva
+        self.costoReserva = costoReserva
+        self.costoTotal = costoTotal
+        self.estadoRegistro = estadoRegistro
+
     def insert(self):
         try:
             db.session.add(self)
@@ -161,11 +171,12 @@ class Reserva(db.Model):
     def update(self):
         try:
             db.session.commit()
+            return self.idReserva
         except:
             db.session.rollback()
         finally:
             db.session.close()
-
+            
     def delete(self):
         try:
             db.session.delete(self)
@@ -174,13 +185,16 @@ class Reserva(db.Model):
             db.session.rollback()
         finally:
             db.session.close()
-
-    def __init__(self, idUsuario, idEstacionamiento, idAuto, inicioReserva, finReserva, costoReserva, costoTotal, estadoRegistro):
-        self.idUsuario = idUsuario
-        self.idEstacionamiento = idEstacionamiento
-        self.idAuto = idAuto
-        self.inicioReserva = inicioReserva
-        self.finReserva = finReserva
-        self.costoReserva = costoReserva
-        self.costoTotal = costoTotal
-        self.estadoRegistro = estadoRegistro
+    
+    def format(self):
+        return{
+            'idReserva':self.idReserva,
+            'idUsuario':self.idUsuario,
+            'idEstacionamiento':self.idEstacionamiento,
+            'idAuto':self.idAuto,
+            'inicioReserva':self.inicioReserva,
+            'finReserva':self.finReserva,
+            'costoReserva':self.costoReserva,
+            'costoTotal':self.costoTotal,
+            'estadoRegistro':self.estadoRegistro
+        }
