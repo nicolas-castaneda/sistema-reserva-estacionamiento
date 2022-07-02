@@ -224,6 +224,7 @@ export default {
         });
     },
     updateAuto(placa) {
+      let scopeself = this;
       document
         .getElementById("formularioupdateAuto")
         .addEventListener("submit", (e) => {
@@ -245,7 +246,17 @@ export default {
             },
           })
             .then((res) => res.json())
-            .then((response) => console.log("Success:", response))
+            .then(async function () {
+              console.log(scopeself);
+              let idUsuario = scopeself.$store.state.user.id;
+              let token = scopeself.$store.state.user.token;
+              let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+              scopeself.autos = respuesta["autos"];
+              const modalFormulario = Modal.getInstance(
+                document.getElementById("modalupdateAuto")
+              );
+              modalFormulario.hide();
+            })
             .catch((error) => console.error("Error:", error));
         });
     },
