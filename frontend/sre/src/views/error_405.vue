@@ -54,7 +54,6 @@ setInterval(devolverInicio, 10000);
 div {
   color: white;
   margin: 0.9%;
-  font-family: georgia, "Times New Roman", Times, serif;
 }
 
 p {
@@ -68,7 +67,6 @@ h1 {
   font-weight: bold;
   margin: 1em;
   margin: 0.9%;
-  font-family: georgia, "Times New Roman", Times, serif;
 }
 
 footer {
@@ -87,7 +85,6 @@ img {
 }
 
 body {
-  font-family: georgia, "Times New Roman", Times, serif;
   color: white;
   font-size: 1.2rem;
   line-height: 1.6em;

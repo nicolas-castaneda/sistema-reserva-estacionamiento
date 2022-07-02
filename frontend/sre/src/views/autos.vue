@@ -1,5 +1,5 @@
 <template>
-  <div class="container p-5 shadow-lg bg-body rounded">
+  <div class="container mt-4 shadow-lg p-3 mb-5 bg-body rounded">
     <!-- boton para agregar autos -->
     <button
       type="button"
@@ -11,7 +11,7 @@
       Crear
     </button>
     <!-- tabla de autos -->
-    <table id="tablaAutos" class="table mt-2 table bordered table-striped">
+    <table id="tablaAutos" class="table mt-2 table-bordered table-striped">
       <thead>
         <div class="h3 text-center font-weight-bold">Mis Autos</div>
         <tr>
@@ -286,4 +286,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+label {
+  color: black !important;
+}
+</style>

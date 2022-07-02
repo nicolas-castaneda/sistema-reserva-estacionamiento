@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/home.vue";
+import store from "../store";
 
 const routes = [
   {
@@ -29,18 +30,27 @@ const routes = [
   {
     path: "/estacionamiento",
     name: "estacionamiento",
+    meta: {
+      requiresAuth: true,
+    },
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/estacionamiento.vue"),
   },
   {
     path: "/autos",
     name: "autos",
+    meta: {
+      requiresAuth: true,
+    },
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/autos.vue"),
   },
   {
     path: "/reservas",
     name: "reservas",
+    meta: {
+      requiresAuth: true,
+    },
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/reservas.vue"),
   },
@@ -49,6 +59,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to) => {
+  if (to.meta.requiresAuth && !store.getters.getAuth) {
+    return {
+      name: "login",
+    };
+  }
 });
 
 export default router;

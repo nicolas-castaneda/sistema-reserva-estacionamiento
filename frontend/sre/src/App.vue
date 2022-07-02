@@ -15,6 +15,7 @@ export default {
   },
   mounted() {
     this.token = this.$store.state.user.token;
+    console.log(this.$store.state.auth);
     if (this.token !== null) {
       console.log(this.token);
       fetch("http://localhost:5000/session", {
@@ -31,6 +32,7 @@ export default {
         .then((data) => {
           if (!data.success) {
             this.$store.commit("logout");
+            this.$router.push("/");
           }
         })
         .catch((error) => {
@@ -46,9 +48,13 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Verdana, Geneva, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --main-color: #4ecca3;
+  --secundary-color: #393e46;
+  --bg-color: #232931;
+  --bg-secundary-color: #eeeeee;
   text-align: center;
   color: #eeeeee;
   background-color: #232931;

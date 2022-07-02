@@ -1,5 +1,5 @@
 <template>
-  <div class="pantalla min-vh-100">
+  <div class="pantalla">
     <div class="grupoEstacionamiento">
       <div
         v-for="(estacionamiento, index) in estacionamientos"
@@ -454,6 +454,5 @@ export default {
 
 label {
   color: black !important;
-  font-family: georgia, "Times New Roman", Times, serif;
 }
 </style>

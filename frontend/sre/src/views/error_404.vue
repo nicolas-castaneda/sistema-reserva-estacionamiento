@@ -42,7 +42,6 @@ h1 {
   font-weight: bold;
   margin: 1em;
   margin: 0.9%;
-  font-family: georgia, "Times New Roman", Times, serif;
 }
 
 img {
