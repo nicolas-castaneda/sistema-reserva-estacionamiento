@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import * as reservas from "../assets/reservas/reservas.js";
 export default {
   name: "reservas",
   data() {
@@ -57,9 +58,9 @@ export default {
     deleteReserva(id) {
       let scopeself = this;
       const data = {
-        reserva: reserva,
+        idReserva: id,
       };
-      fetch("http://localhost:5000/reservas/delete"+ id, {
+      fetch("http://localhost:5000/reservas/delete" + id, {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {
@@ -67,14 +68,13 @@ export default {
         },
       })
         .then((response) => response.json())
-        .then(async function(){
+        .then(async function () {
           let idUsuario = scopeself.$store.state.user.id;
           let token = scopeself.$store.state.user.token;
           let respuesta = await reservas.getReservas(idUsuario, token);
           scopeself.reservas = respuesta["reservas"];
         })
-        .catch((error) => console.log("Error:",error));
-
+        .catch((error) => console.log("Error:", error));
     },
   },
 };
