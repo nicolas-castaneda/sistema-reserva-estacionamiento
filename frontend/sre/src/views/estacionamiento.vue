@@ -454,6 +454,5 @@ export default {
 
 label {
   color: black !important;
-  font-family: georgia, "Times New Roman", Times, serif;
 }
 </style>

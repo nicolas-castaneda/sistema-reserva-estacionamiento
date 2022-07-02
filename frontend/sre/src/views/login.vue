@@ -93,7 +93,6 @@ form {
   padding: 50px 35px;
 }
 form * {
-  font-family: "Poppins", sans-serif;
   letter-spacing: 0.5px;
   outline: none;
   border: none;
