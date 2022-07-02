@@ -15,6 +15,7 @@ export default {
   },
   mounted() {
     this.token = this.$store.state.user.token;
+    console.log(this.$store.state.auth);
     if (this.token !== null) {
       console.log(this.token);
       fetch("http://localhost:5000/session", {
@@ -31,6 +32,7 @@ export default {
         .then((data) => {
           if (!data.success) {
             this.$store.commit("logout");
+            this.$router.push("/");
           }
         })
         .catch((error) => {

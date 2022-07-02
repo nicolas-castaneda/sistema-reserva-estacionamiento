@@ -3,6 +3,7 @@ import createPersistedStore from "vuex-persistedstate";
 
 export default createStore({
   state: {
+    auth: false,
     user: {
       id: null,
       nombres: null,
@@ -17,9 +18,13 @@ export default createStore({
     getUserId(state) {
       return state.user.id;
     },
+    getAuth(state) {
+      return state.auth;
+    },
   },
   mutations: {
-    setUser(state, user) {
+    login(state, user) {
+      state.auth = true;
       state.user = user;
     },
     logout(state) {
@@ -27,6 +32,7 @@ export default createStore({
       state.user.nombres = null;
       state.user.correo = null;
       state.user.token = null;
+      state.auth = false;
     },
   },
   actions: {},

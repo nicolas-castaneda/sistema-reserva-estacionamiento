@@ -65,7 +65,7 @@ export default {
               nombres: data.user.nombres,
               token: data.token,
             };
-            this.$store.commit("setUser", user);
+            this.$store.commit("login", user);
             this.$router.push("/");
             console.log(this.$store.getters.getUser);
           } else {
