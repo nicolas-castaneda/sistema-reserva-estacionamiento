@@ -44,23 +44,37 @@ export default {
   name: "reservas",
   data() {
     return {
-      reservas: [],
+      reservas: {},
     };
+  },
+  async created() {
+    let idUsuario = this.$store.state.user.id;
+    let token = this.$store.state.user.token;
+    let respuesta = await reservas.getReservas(idUsuario, token);
+    this.reservas = respuesta["reservas"];
   },
   methods: {
     deleteReserva(id) {
+      let scopeself = this;
       const data = {
-        idReserva: id,
+        reserva: reserva,
       };
-      fetch("/reservas/delete" + id, {
+      fetch("http://localhost:5000/reservas/delete"+ id, {
         method: "DELETE",
+        body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
         },
       })
         .then((response) => response.json())
-        .catch((error) => console.error("Error:", error))
-        .then((response) => console.log("Success:",response));
+        .then(async function(){
+          let idUsuario = scopeself.$store.state.user.id;
+          let token = scopeself.$store.state.user.token;
+          let respuesta = await reservas.getReservas(idUsuario, token);
+          scopeself.reservas = respuesta["reservas"];
+        })
+        .catch((error) => console.log("Error:",error));
+
     },
   },
 };
