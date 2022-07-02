@@ -35,11 +35,11 @@
               class="btn btn-success"
               data-bs-toggle="modal"
               data-bs-target="#modalupdateAuto"
-              @click="updateAuto(auto.id)"
+              @click="updateAuto(auto.placa)"
             >
               Editar
             </button>
-            <button class="btn btn-warning" @click="deleteAuto(auto.id)">
+            <button class="btn btn-warning" @click="deleteAuto(auto.placa)">
               Eliminar
             </button>
           </td>
@@ -64,34 +64,44 @@
                   ></button>
                 </div>
                 <div class="modal-body">
-                  <div class="mb-3">
-                    <label for="placa" class="col-form-label">Placa</label>
-                    <input id="updatePlaca" type="text" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="marca" class="col-form-label">Marca</label>
-                    <input id="updateMarca" type="text" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="modelo" class="col-form-label">Modelo</label>
-                    <input id="updateModelo" type="text" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="color" class="col-form-label">Color</label>
-                    <input id="updateColor" type="text" class="form-control" />
-                  </div>
-                  <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                    >
-                      Cerrar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                      Guardar
-                    </button>
-                  </div>
+                  <form id="formularioupdateAuto" method="PATCH">
+                    <div class="mb-3">
+                      <label for="marca" class="col-form-label">Marca</label>
+                      <input
+                        id="updateMarca"
+                        type="text"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="modelo" class="col-form-label">Modelo</label>
+                      <input
+                        id="updateModelo"
+                        type="text"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="color" class="col-form-label">Color</label>
+                      <input
+                        id="updateColor"
+                        type="text"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Cerrar
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        Guardar
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -170,13 +180,6 @@ export default {
     let token = this.$store.state.user.token;
     let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
     this.autos = respuesta["autos"];
-    // this.cantidadestacionamientos = respuesta["total_estacionamientos"];
-    // let scopeself = this;
-    // setInterval(async function () {
-    //   let respuesta = await estacionamiento.obtenerEstacionamientos();
-    //   scopeself.estacionamientos = respuesta["estacionamientos"];
-    //   scopeself.cantidadestacionamientos = respuesta["total_estacionamientos"];
-    // }, 10000);
   },
   methods: {
     insertAuto() {
@@ -220,7 +223,7 @@ export default {
             .catch((error) => console.error("Error:", error));
         });
     },
-    updateAuto(id) {
+    updateAuto(placa) {
       document
         .getElementById("formularioupdateAuto")
         .addEventListener("submit", (e) => {
@@ -229,26 +232,27 @@ export default {
           const modelo = document.getElementById("updateModelo").value;
           const color = document.getElementById("updateColor").value;
           const data = {
-            idAuto: id,
+            placa: placa,
             marca: marca,
             modelo: modelo,
             color: color,
           };
           fetch("http://localhost:5000/autos/update", {
-            method: "PUT",
+            method: "PATCH",
             body: JSON.stringify(data),
             headers: {
               "Content-Type": "application/json",
             },
           })
             .then((res) => res.json())
-            .catch((error) => console.error("Error:", error))
-            .then((response) => console.log("Success:", response));
+            .then((response) => console.log("Success:", response))
+            .catch((error) => console.error("Error:", error));
         });
     },
-    deleteAuto(id) {
+    deleteAuto(placa) {
+      let scopeself = this;
       const data = {
-        idAuto: id,
+        placa: placa,
       };
       fetch("http://localhost:5000/autos/delete", {
         method: "DELETE",
@@ -258,8 +262,14 @@ export default {
         },
       })
         .then((res) => res.json())
-        .catch((error) => console.error("Error:", error))
-        .then((response) => console.log("Success:", response));
+        .then(async function () {
+          console.log(scopeself);
+          let idUsuario = scopeself.$store.state.user.id;
+          let token = scopeself.$store.state.user.token;
+          let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+          scopeself.autos = respuesta["autos"];
+        })
+        .catch((error) => console.error("Error:", error));
     },
   },
 };

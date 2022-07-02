@@ -285,27 +285,30 @@ def create_app(test_config=None):
     @app.route("/autos/delete", methods=['DELETE'])
     def delete_auto():
         data = request.get_json()
+        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
-        idAuto = data.get('idAuto',None)
-        if not idAuto:
+        print(data)
+        placa = data.get('placa',None)
+        if not placa:
             abort(400, 'No se recibio un idAuto')
-        auto = Auto.query.filter_by(idAuto=idAuto).first()
+        auto = Auto.query.filter_by(placa=placa).first()
         if not auto:
             abort(400, 'No se encontro el auto')
         auto.delete()
         return jsonify({
             'success':True,
-            'deleted':idAuto,
+            'deleted':placa,
         })
     
     @app.route("/autos/update", methods=['PATCH'])
     def update_auto():
         data = request.get_json()
+        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
-        idAuto = data.get('idAuto',None)
-        if not idAuto:
+        placa = data.get('placa',None)
+        if not placa:
             abort(400, 'No se recibio un idAuto')
         marca = data.get('marca',None)
         if msg:= v_marca(marca):
@@ -317,16 +320,17 @@ def create_app(test_config=None):
         if msg:= v_color(color):
             abort(400, msg)
 
-        auto = Auto.query.filter_by(idAuto=idAuto).first()
+        auto = Auto.query.filter_by(placa=placa).first()
         if not auto:
             abort(400, 'No se encontro el auto')
         auto.marca = marca
         auto.modelo = modelo
         auto.color = color
+        print(auto)
         auto.update()
         return jsonify({
             'success':True,
-            'updated':idAuto,
+            'updated':placa
         })
 
     @app.route("/reservas/delete", methods=['DELETE'])
