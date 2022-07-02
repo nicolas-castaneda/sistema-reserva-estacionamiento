@@ -49,6 +49,10 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --main-color: #4ecca3;
+  --secundary-color: #393e46;
+  --bg-color: #232931;
+  --bg-secundary-color: #eeeeee;
   text-align: center;
   color: #eeeeee;
   background-color: #232931;

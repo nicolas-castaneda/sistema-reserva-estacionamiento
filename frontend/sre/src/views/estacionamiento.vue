@@ -1,5 +1,5 @@
 <template>
-  <div class="pantalla min-vh-100">
+  <div class="pantalla">
     <div class="grupoEstacionamiento">
       <div
         v-for="(estacionamiento, index) in estacionamientos"

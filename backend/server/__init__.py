@@ -88,7 +88,7 @@ def create_app(test_config=None):
             
         informacion = v_login(correo, contrasena)
         if not informacion['success']:
-            abort(401, informacion['message'])
+            abort(403, informacion['message'])
         user = informacion['user']
         token = jwt.encode({
             'id': user.idUsuario,
