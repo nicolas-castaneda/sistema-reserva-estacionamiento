@@ -25,7 +25,7 @@
       </thead>
       <tbody>
         <tr v-for="auto in autos" :key="auto.placa">
-          <td scope="col">{{ auto.placa }}</td>
+          <td>{{ auto.placa }}</td>
           <td>{{ auto.marca }}</td>
           <td>{{ auto.modelo }}</td>
           <td>{{ auto.color }}</td>
@@ -35,11 +35,11 @@
               class="btn btn-success"
               data-bs-toggle="modal"
               data-bs-target="#modalupdateAuto"
-              @click="updateAuto(auto.id)"
+              @click="updateAuto(auto.placa)"
             >
               Editar
             </button>
-            <button class="btn btn-warning" @click="deleteAuto(auto.id)">
+            <button class="btn btn-warning" @click="deleteAuto(auto.placa)">
               Eliminar
             </button>
           </td>
@@ -64,34 +64,44 @@
                   ></button>
                 </div>
                 <div class="modal-body">
-                  <div class="mb-3">
-                    <label for="placa" class="col-form-label">Placa</label>
-                    <input id="updatePlaca" type="text" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="marca" class="col-form-label">Marca</label>
-                    <input id="updateMarca" type="text" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="modelo" class="col-form-label">Modelo</label>
-                    <input id="updateModelo" type="text" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="color" class="col-form-label">Color</label>
-                    <input id="updateColor" type="text" class="form-control" />
-                  </div>
-                  <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                    >
-                      Cerrar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                      Guardar
-                    </button>
-                  </div>
+                  <form id="formularioupdateAuto" method="PATCH">
+                    <div class="mb-3">
+                      <label for="marca" class="col-form-label">Marca</label>
+                      <input
+                        id="updateMarca"
+                        type="text"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="modelo" class="col-form-label">Modelo</label>
+                      <input
+                        id="updateModelo"
+                        type="text"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="color" class="col-form-label">Color</label>
+                      <input
+                        id="updateColor"
+                        type="text"
+                        class="form-control"
+                      />
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Cerrar
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        Guardar
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -155,15 +165,25 @@
 </template>
 
 <script>
+import * as autos from "../assets/autos/autos.js";
+import { Modal } from "bootstrap";
+
 export default {
   name: "autos",
   data() {
     return {
-      autos: [],
+      autos: {},
     };
+  },
+  async created() {
+    let idUsuario = this.$store.state.user.id;
+    let token = this.$store.state.user.token;
+    let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+    this.autos = respuesta["autos"];
   },
   methods: {
     insertAuto() {
+      let scopeself = this;
       document
         .getElementById("formularioinsertAuto")
         .addEventListener("submit", (e) => {
@@ -174,14 +194,14 @@ export default {
           const color = document.getElementById("insertColor").value;
           const estado = "DIS";
           const data = {
+            idUsuario: this.$store.state.user.id,
             placa: placa,
             marca: marca,
             modelo: modelo,
             color: color,
             estado: estado,
           };
-          // this.$store.state.user.id
-          fetch("http://127.0.0.1:5000/autos/insert", {
+          fetch("http://localhost:5000/autos/insert", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -189,11 +209,22 @@ export default {
             },
           })
             .then((res) => res.json())
-            .catch((error) => console.error("Error:", error))
-            .then((response) => console.log("Success:", response));
+            .then(async function () {
+              console.log(scopeself);
+              let idUsuario = scopeself.$store.state.user.id;
+              let token = scopeself.$store.state.user.token;
+              let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+              scopeself.autos = respuesta["autos"];
+              const modalFormulario = Modal.getInstance(
+                document.getElementById("modalinsertAuto")
+              );
+              modalFormulario.hide();
+            })
+            .catch((error) => console.error("Error:", error));
         });
     },
-    updateAuto(id) {
+    updateAuto(placa) {
+      let scopeself = this;
       document
         .getElementById("formularioupdateAuto")
         .addEventListener("submit", (e) => {
@@ -202,28 +233,39 @@ export default {
           const modelo = document.getElementById("updateModelo").value;
           const color = document.getElementById("updateColor").value;
           const data = {
-            idAuto: id,
+            placa: placa,
             marca: marca,
             modelo: modelo,
             color: color,
           };
-          fetch("/autos/update/" + id, {
-            method: "PUT",
+          fetch("http://localhost:5000/autos/update", {
+            method: "PATCH",
             body: JSON.stringify(data),
             headers: {
               "Content-Type": "application/json",
             },
           })
             .then((res) => res.json())
-            .catch((error) => console.error("Error:", error))
-            .then((response) => console.log("Success:", response));
+            .then(async function () {
+              console.log(scopeself);
+              let idUsuario = scopeself.$store.state.user.id;
+              let token = scopeself.$store.state.user.token;
+              let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+              scopeself.autos = respuesta["autos"];
+              const modalFormulario = Modal.getInstance(
+                document.getElementById("modalupdateAuto")
+              );
+              modalFormulario.hide();
+            })
+            .catch((error) => console.error("Error:", error));
         });
     },
-    deleteAuto(id) {
+    deleteAuto(placa) {
+      let scopeself = this;
       const data = {
-        idAuto: id,
+        placa: placa,
       };
-      fetch("/autos/delete/" + id, {
+      fetch("http://localhost:5000/autos/delete", {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {
@@ -231,8 +273,14 @@ export default {
         },
       })
         .then((res) => res.json())
-        .catch((error) => console.error("Error:", error))
-        .then((response) => console.log("Success:", response));
+        .then(async function () {
+          console.log(scopeself);
+          let idUsuario = scopeself.$store.state.user.id;
+          let token = scopeself.$store.state.user.token;
+          let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+          scopeself.autos = respuesta["autos"];
+        })
+        .catch((error) => console.error("Error:", error));
     },
   },
 };

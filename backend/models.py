@@ -73,7 +73,7 @@ class Auto(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            return self.idAuto
+            return self.placa
         except:
             db.session.rollback()
         finally:
@@ -82,6 +82,7 @@ class Auto(db.Model):
     def update(self):
         try:
             db.session.commit()
+            return self.placa
         except:
             db.session.rollback()
         finally:
