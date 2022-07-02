@@ -23,7 +23,6 @@ def token_required(f):
     @wraps(f)
     def _verify(*args, **kwargs):
         auth_headers = request.headers.get('Authorization', '').split()
-
         invalid_msg = {
             'message': 'Invalid token. Registeration and / or authentication required',
             'authenticated': False
@@ -38,11 +37,11 @@ def token_required(f):
 
         try:
             token = auth_headers[1]
-            data = jwt.decode(token, current_app.config['SECRET_KEY'])
-            user = Usuario.query.filter_by(email=data['correo']).first()
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            user = Usuario.query.filter_by(correo=data['correo']).first()
             if not user:
-                raise RuntimeError('User not found')
-            return f(user, *args, **kwargs)
+                abort(401, 'User not found')
+            return f(user)
         except jwt.ExpiredSignatureError:
             abort(401, expired_msg) # 401 is Unauthorized HTTP status code
         except (jwt.InvalidTokenError, Exception) as e:
@@ -63,15 +62,18 @@ def create_app(test_config=None):
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS,UPDATE')
         return response
     
     
     @app.route('/usuario', methods=['GET'])
     def get_usuarios():
         users = Usuario.query.all()
-        return jsonify([user.format() for user in users])
+        return jsonify({'success': True,
+                        'users':[user.format() for user in users],
+                        'count': len(users)
+                        })
     
     @app.route('/session', methods=['POST'])
     def login():
@@ -83,21 +85,31 @@ def create_app(test_config=None):
         if msg:= v_contrasena(contrasena, True):
             abort(400, msg)
             
-        user = Usuario.authenticate(**datos)
-        if not user:
-            abort(401, 'Usuario o contraseña incorrectos')
-        
+        informacion = v_login(correo, contrasena)
+        if not informacion['success']:
+            abort(401, informacion['message'])
+        user = informacion['user']
         token = jwt.encode({
             'id': user.idUsuario,
             'correo': user.correo,
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, current_app.config['SECRET_KEY'])
+        }, current_app.config['SECRET_KEY'],
+        algorithm='HS256')
         
         return jsonify({
             'success': True,
             'user': user.format(),
             'token': token
+        })
+    
+    @app.route('/session', methods=['PATCH'])
+    @token_required
+    def session_update(user):
+        return jsonify({
+            'success': True,
+            'time': datetime.utcnow(),
+            'user': user.format()
         })
     
     @app.route('/usuario', methods=['POST'])
@@ -140,23 +152,25 @@ def create_app(test_config=None):
                 'total_estacionamientos':len(lugaresEstacionamiento)
         })
 
-    @app.route("/auto/<usuario>", methods=['GET'])
+    @app.route("/autos/<idUsuario>", methods=['GET'])
+    @token_required
     def get_autos(usuario):
-        usuario = Usuario.query.filter_by(correo=usuario).first()
+        print(usuario)
         if not usuario or usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
         autos = [auto.format() for auto in Auto.query.filter_by(idUsuario=idUsuario).order_by("idAuto").all()]
         return jsonify({
             'success':True,
-            'autos':autos,
+            'autos': autos,
             'total_autos':len(autos)
         })
 
-    @app.route("/autos/<usuario>", methods=['POST'])
-    def create_auto(usuario):
+    @app.route("/autos/insert", methods=['POST'])
+    def create_auto():
         data = request.get_json()
-        usuario = Usuario.query.filter_by(correo=usuario).first()
+        idUsuario = data.get('idUsuario', None)
+        usuario = Usuario.query.filter_by(idUsuario=idUsuario).first()
         idUsuario = usuario.idUsuario
         if not idUsuario:
             abort(400, 'No se recibio un usuario')
@@ -268,62 +282,33 @@ def create_app(test_config=None):
             'created':idReserva,
         })
 
-    # @app.route("/autos/<usuario>", methods=['POST'])
-    # def create_auto(usuario):
-    #     data = request.get_json()
-    #     usuario = Usuario.query.filter_by(correo=usuario).first()
-    #     idUsuario = usuario.idUsuario
-    #     if not idUsuario:
-    #         abort(400, 'No se recibio un usuario')
-    #     if not data:
-    #         abort(400, 'No se recibieron datos')
-    #     placa = data.get('placa',None)
-    #     if msg:= v_placa(placa):
-    #         abort(400, msg)
-    #     marca = data.get('marca',None)
-    #     if msg:= v_marca(marca):
-    #         abort(400, msg)
-    #     modelo = data.get('modelo',None)
-    #     if msg:= v_modelo(modelo):
-    #         abort(400, msg)
-    #     color = data.get('color',None)
-    #     if msg:= v_color(color):
-    #         abort(400, msg)
-    #     try:
-    #         auto = Auto(idUsuario=idUsuario,placa=placa, marca=marca, modelo=modelo, color=color, estado='DIS')
-    #         newAutoId = auto.insert()
-    #         return jsonify({
-    #             'success':True,
-    #             'created':newAutoId,
-    #         })
-    #     except Exception as e:
-    #         print(e)
-    #         abort(500)
-
-    @app.route("/autos/<idAuto>", methods=['DELETE'])
+    @app.route("/autos/delete", methods=['DELETE'])
     def delete_auto():
         data = request.get_json()
+        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
-        idAuto = data.get('idAuto',None)
-        if not idAuto:
+        print(data)
+        placa = data.get('placa',None)
+        if not placa:
             abort(400, 'No se recibio un idAuto')
-        auto = Auto.query.filter_by(idAuto=idAuto).first()
+        auto = Auto.query.filter_by(placa=placa).first()
         if not auto:
             abort(400, 'No se encontro el auto')
         auto.delete()
         return jsonify({
             'success':True,
-            'deleted':idAuto,
+            'deleted':placa,
         })
     
-    @app.route("/autos/<idAuto>", methods=['PATCH'])
+    @app.route("/autos/update", methods=['PATCH'])
     def update_auto():
         data = request.get_json()
+        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
-        idAuto = data.get('idAuto',None)
-        if not idAuto:
+        placa = data.get('placa',None)
+        if not placa:
             abort(400, 'No se recibio un idAuto')
         marca = data.get('marca',None)
         if msg:= v_marca(marca):
@@ -335,24 +320,25 @@ def create_app(test_config=None):
         if msg:= v_color(color):
             abort(400, msg)
 
-        auto = Auto.query.filter_by(idAuto=idAuto).first()
+        auto = Auto.query.filter_by(placa=placa).first()
         if not auto:
             abort(400, 'No se encontro el auto')
         auto.marca = marca
         auto.modelo = modelo
         auto.color = color
+        print(auto)
         auto.update()
         return jsonify({
             'success':True,
-            'updated':idAuto,
+            'updated':placa
         })
 
-    @app.route("/reservas/<idReserva>", methods=['DELETE'])
+    @app.route("/reservas/delete", methods=['DELETE'])
     def delete_reserva():
         data = request.get_json()
         if not data:
             abort(400, 'No se recibieron datos')
-        idReserva = data.get('idReserva',None)
+        idReserva = data.get('idReserva', None)
         if not idReserva:
             abort(400, 'No se recibio un idReserva')
         reserva = Reserva.query.filter_by(idReserva=idReserva).first()

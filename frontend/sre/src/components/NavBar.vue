@@ -91,12 +91,6 @@ export default {
       current_url: window.location.pathname,
     };
   },
-  mounted() {
-    this.token = this.$store.state.user.token;
-    if (this.token !== null) {
-      console.log(this.token);
-    }
-  },
   props: {
     user: String,
   },
