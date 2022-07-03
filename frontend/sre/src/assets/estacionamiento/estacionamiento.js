@@ -12,9 +12,12 @@ export async function obtenerEstacionamientos() {
   return respuesta;
 }
 
-export async function obtenerAutoUsuario(usuario) {
-  let respuesta = await fetch("http://127.0.0.1:5000/auto/" + usuario, {
+export async function obtenerAutoUsuario(usuario, token) {
+  let respuesta = await fetch("http://127.0.0.1:5000/autos/" + usuario, {
     method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
   })
     .then(function (response) {
       return response.json();
