@@ -202,6 +202,7 @@
           </form>
         </div>
       </div>
+      <Alert :error="error" v-if="!ok"></Alert>
     </div>
   </div>
 </template>
@@ -209,12 +210,14 @@
 <script>
 import * as estacionamiento from "../assets/estacionamiento/estacionamiento.js";
 import { Modal } from "bootstrap";
+import Alert from "../components/alert.vue";
 
 export default {
   name: "app-estacionamiento",
   data() {
     return {
-      usuario: "a@a.com",
+      usuario: null,
+      token: null,
       lugarEstacionamientoFormulario: "--",
       inicioReservaFormulario: null,
       finReservaFormulario: null,
@@ -228,9 +231,15 @@ export default {
       cantidadAutos: 0,
       alternarOpcionAutos: false,
       error: null,
+      ok: false,
     };
   },
+  components: {
+    Alert,
+  },
   async created() {
+    this.usuario = this.$store.state.user.id;
+    this.token = this.$store.state.user.token;
     let respuesta = await estacionamiento.obtenerEstacionamientos();
     this.estacionamientos = respuesta["estacionamientos"];
     this.cantidadestacionamientos = respuesta["total_estacionamientos"];
@@ -246,19 +255,25 @@ export default {
       this.lugarEstacionamientoFormulario = lugar;
       this.alternarOpcionAutos = true;
       this.placaFormulario = "";
+      this.ok = true;
+      this.error = null;
     },
     autosUsuario: async function () {
-      let respuesta = await estacionamiento.obtenerAutoUsuario(this.usuario);
+      let respuesta = await estacionamiento.obtenerAutoUsuario(
+        this.usuario,
+        this.token
+      );
       this.autos = respuesta["autos"];
       this.cantidadAutos = respuesta["total_autos"];
     },
     submit: function (event) {
+      let selfscope = this;
       event.preventDefault();
       this.error = null;
+      this.ok = false;
       fetch("http://127.0.0.1:5000/reserva", {
         method: "POST",
         body: JSON.stringify({
-          usuario: this.usuario,
           lugar: this.lugarEstacionamientoFormulario,
           inicioReserva: this.inicioReservaFormulario,
           finReserva: this.finReservaFormulario,
@@ -271,12 +286,15 @@ export default {
           opcion: this.alternarOpcionAutos,
         }),
         headers: {
+          Authorization: "Bearer " + selfscope.token,
           "Content-Type": "application/json",
         },
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           if (data.success) {
+            this.ok = true;
             this.lugarEstacionamientoFormulario = "--";
             this.inicioReservaFormulario = null;
             this.finReservaFormulario = null;
@@ -292,7 +310,8 @@ export default {
             this.error = data.message;
             console.log(this.error);
           }
-        });
+        })
+        .catch((error) => console.log("error en el catch", error));
     },
   },
   computed: {

@@ -6,7 +6,6 @@
       class="btn btn-primary"
       data-bs-toggle="modal"
       data-bs-target="#modalinsertAuto"
-      @click="insertAuto()"
     >
       Crear
     </button>
@@ -129,7 +128,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="formularioinsertAuto" method="POST">
+            <form id="formularioinsertAuto" method="POST" @submit="insertAuto">
               <div class="mb-3">
                 <label for="placa" class="col-form-label">Placa</label>
                 <input id="insertPlaca" type="text" class="form-control" />
@@ -182,46 +181,42 @@ export default {
     this.autos = respuesta["autos"];
   },
   methods: {
-    insertAuto() {
+    insertAuto(e) {
       let scopeself = this;
-      document
-        .getElementById("formularioinsertAuto")
-        .addEventListener("submit", (e) => {
-          e.preventDefault();
-          const placa = document.getElementById("insertPlaca").value;
-          const marca = document.getElementById("insertMarca").value;
-          const modelo = document.getElementById("insertModelo").value;
-          const color = document.getElementById("insertColor").value;
-          const estado = "DIS";
-          const data = {
-            idUsuario: this.$store.state.user.id,
-            placa: placa,
-            marca: marca,
-            modelo: modelo,
-            color: color,
-            estado: estado,
-          };
-          fetch("http://localhost:5000/autos/insert", {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-            .then((res) => res.json())
-            .then(async function () {
-              console.log(scopeself);
-              let idUsuario = scopeself.$store.state.user.id;
-              let token = scopeself.$store.state.user.token;
-              let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
-              scopeself.autos = respuesta["autos"];
-              const modalFormulario = Modal.getInstance(
-                document.getElementById("modalinsertAuto")
-              );
-              modalFormulario.hide();
-            })
-            .catch((error) => console.error("Error:", error));
-        });
+      e.preventDefault();
+      const placa = document.getElementById("insertPlaca").value;
+      const marca = document.getElementById("insertMarca").value;
+      const modelo = document.getElementById("insertModelo").value;
+      const color = document.getElementById("insertColor").value;
+      const estado = "DIS";
+      const data = {
+        idUsuario: this.$store.state.user.id,
+        placa: placa,
+        marca: marca,
+        modelo: modelo,
+        color: color,
+        estado: estado,
+      };
+      fetch("http://localhost:5000/autos/insert", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then(async function () {
+          console.log(scopeself);
+          let idUsuario = scopeself.$store.state.user.id;
+          let token = scopeself.$store.state.user.token;
+          let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+          scopeself.autos = respuesta["autos"];
+          const modalFormulario = Modal.getInstance(
+            document.getElementById("modalinsertAuto")
+          );
+          modalFormulario.hide();
+        })
+        .catch((error) => console.error("Error:", error));
     },
     updateAuto(placa) {
       let scopeself = this;
