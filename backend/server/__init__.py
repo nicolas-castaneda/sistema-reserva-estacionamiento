@@ -41,12 +41,12 @@ def token_required(f):
             user = Usuario.query.filter_by(correo=data['correo']).first()
             if not user:
                 abort(401, 'User not found')
-            return f(user)
         except jwt.ExpiredSignatureError:
             abort(401, expired_msg) # 401 is Unauthorized HTTP status code
         except (jwt.InvalidTokenError, Exception) as e:
             print(e)
             abort(401, invalid_msg)
+        return f(user, *args, **kwargs)
 
     return _verify
 
@@ -154,7 +154,7 @@ def create_app(test_config=None):
 
     @app.route("/autos/<idUsuario>", methods=['GET'])
     @token_required
-    def get_autos(usuario):
+    def get_autos(usuario, idUsuario):
         print(usuario)
         if usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
@@ -200,6 +200,7 @@ def create_app(test_config=None):
             abort(500)
         
     @app.route("/reserva", methods=['POST'])
+    @token_required
     def create_reserva():
         data = request.get_json()
         if not data:
@@ -335,7 +336,7 @@ def create_app(test_config=None):
 
     @app.route("/reservas/<idUsuario>", methods=['GET'])
     @token_required
-    def get_reservas(usuario):
+    def get_reservas(usuario, idUsuario):
         print(usuario)
         if usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
