@@ -153,7 +153,6 @@ def create_app(test_config=None):
     @app.route("/autos/<idUsuario>", methods=['GET'])
     @token_required
     def get_autos(usuario, idUsuario):
-        #print(usuario)
         if usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
@@ -200,7 +199,6 @@ def create_app(test_config=None):
     @app.route("/reserva", methods=['POST'])
     @token_required
     def create_reserva(usuario):
-        print(usuario)
         data = request.get_json()
         if not data:
             return abort(400, 'No se recibieron datos')
@@ -231,7 +229,6 @@ def create_app(test_config=None):
         opcion = data.get('opcion', None)
         if opcion:
             if msg:= v_placa(placa):
-                print('llego aca')
                 return abort(400, msg)
             marca = data.get('marca',None)
             if msg:= v_marca(marca):
@@ -282,10 +279,8 @@ def create_app(test_config=None):
     @app.route("/autos/delete", methods=['DELETE'])
     def delete_auto():
         data = request.get_json()
-        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
-        print(data)
         placa = data.get('placa',None)
         if not placa:
             abort(400, 'No se recibio un idAuto')
@@ -301,7 +296,6 @@ def create_app(test_config=None):
     @app.route("/autos/update", methods=['PATCH'])
     def update_auto():
         data = request.get_json()
-        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
         placa = data.get('placa',None)
@@ -323,7 +317,6 @@ def create_app(test_config=None):
         auto.marca = marca
         auto.modelo = modelo
         auto.color = color
-        print(auto)
         auto.update()
         return jsonify({
             'success':True,
@@ -333,7 +326,6 @@ def create_app(test_config=None):
     @app.route("/reservas/<idUsuario>", methods=['GET'])
     @token_required
     def get_reservas(usuario):
-        print(usuario)
         if usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
