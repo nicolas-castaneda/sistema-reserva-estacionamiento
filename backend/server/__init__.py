@@ -325,7 +325,8 @@ def create_app(test_config=None):
 
     @app.route("/reservas/<idUsuario>", methods=['GET'])
     @token_required
-    def get_reservas(usuario):
+    def get_reservas(usuario, idUsuario):
+        print(usuario)
         if usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
