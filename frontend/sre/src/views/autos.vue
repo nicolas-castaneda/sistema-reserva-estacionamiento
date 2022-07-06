@@ -6,7 +6,6 @@
       class="btn btn-primary"
       data-bs-toggle="modal"
       data-bs-target="#modalinsertAuto"
-      @click="insertAuto()"
     >
       Crear
     </button>
@@ -35,7 +34,7 @@
               class="btn btn-success"
               data-bs-toggle="modal"
               data-bs-target="#modalupdateAuto"
-              @click="updateAuto(auto.placa)"
+              v-on:click="getAuto(auto.placa)"
             >
               Editar
             </button>
@@ -64,29 +63,46 @@
                   ></button>
                 </div>
                 <div class="modal-body">
-                  <form id="formularioupdateAuto" method="PATCH">
+                  <form
+                    id="formularioupdateAuto"
+                    method="PATCH"
+                    v-on:submit="updatesubmit"
+                  >
+                    <div class="form-group">
+                      <label for="placa" class="col-form-label">Placa</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="placa"
+                        :placeholder="[[this.updatePlaca]]"
+                        disabled
+                      />
+                    </div>
                     <div class="mb-3">
                       <label for="marca" class="col-form-label">Marca</label>
                       <input
-                        id="updateMarca"
+                        id="marca"
                         type="text"
                         class="form-control"
+                        v-model="updateMarca"
                       />
                     </div>
                     <div class="mb-3">
                       <label for="modelo" class="col-form-label">Modelo</label>
                       <input
-                        id="updateModelo"
+                        id="modelo"
                         type="text"
                         class="form-control"
+                        v-model="updateModelo"
                       />
                     </div>
                     <div class="mb-3">
                       <label for="color" class="col-form-label">Color</label>
                       <input
-                        id="updateColor"
+                        id="color"
                         type="text"
                         class="form-control"
+                        v-model="updateColor"
                       />
                     </div>
                     <div class="modal-footer">
@@ -111,16 +127,17 @@
     </table>
     <!-- Modal insert Auto -->
     <div
-      id="modalinsertAuto"
       class="modal fade"
+      id="modalinsertAuto"
       tabindex="-1"
-      aria-labelledby="modalinsertAuto"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title" id="modalinsertAuto">Crear</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Crear</h5>
             <button
               type="button"
               class="btn-close"
@@ -129,22 +146,46 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="formularioinsertAuto" method="POST">
+            <form
+              id="formularioinsertAuto"
+              method="POST"
+              v-on:submit="insertsubmit"
+            >
               <div class="mb-3">
                 <label for="placa" class="col-form-label">Placa</label>
-                <input id="insertPlaca" type="text" class="form-control" />
+                <input
+                  id="placa"
+                  type="text"
+                  class="form-control"
+                  v-model="insertPlaca"
+                />
               </div>
               <div class="mb-3">
                 <label for="marca" class="col-form-label">Marca</label>
-                <input id="insertMarca" type="text" class="form-control" />
+                <input
+                  id="marca"
+                  type="text"
+                  class="form-control"
+                  v-model="insertMarca"
+                />
               </div>
               <div class="mb-3">
                 <label for="modelo" class="col-form-label">Modelo</label>
-                <input id="insertModelo" type="text" class="form-control" />
+                <input
+                  id="modelo"
+                  type="text"
+                  class="form-control"
+                  v-model="insertModelo"
+                />
               </div>
               <div class="mb-3">
                 <label for="color" class="col-form-label">Color</label>
-                <input id="insertColor" type="text" class="form-control" />
+                <input
+                  id="color"
+                  type="text"
+                  class="form-control"
+                  v-model="insertColor"
+                />
               </div>
               <div class="modal-footer">
                 <button
@@ -172,100 +213,105 @@ export default {
   name: "autos",
   data() {
     return {
-      autos: {},
+      idUsuario: this.$store.state.user.id,
+      insertPlaca: "",
+      insertMarca: "",
+      insertModelo: "",
+      insertColor: "",
+      estado: "DIS",
+      updatePlaca: "",
+      updateMarca: "",
+      updateModelo: "",
+      updateColor: "",
+      autos: [],
     };
   },
   async created() {
-    let idUsuario = this.$store.state.user.id;
-    let token = this.$store.state.user.token;
+    let scopeself = this;
+    let idUsuario = scopeself.$store.state.user.id;
+    let token = scopeself.$store.state.user.token;
     let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
     this.autos = respuesta["autos"];
   },
   methods: {
-    insertAuto() {
-      let scopeself = this;
-      document
-        .getElementById("formularioinsertAuto")
-        .addEventListener("submit", (e) => {
-          e.preventDefault();
-          const placa = document.getElementById("insertPlaca").value;
-          const marca = document.getElementById("insertMarca").value;
-          const modelo = document.getElementById("insertModelo").value;
-          const color = document.getElementById("insertColor").value;
-          const estado = "DIS";
-          const data = {
-            idUsuario: this.$store.state.user.id,
-            placa: placa,
-            marca: marca,
-            modelo: modelo,
-            color: color,
-            estado: estado,
-          };
-          fetch("http://localhost:5000/autos/insert", {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-            .then((res) => res.json())
-            .then(async function () {
-              console.log(scopeself);
-              let idUsuario = scopeself.$store.state.user.id;
-              let token = scopeself.$store.state.user.token;
-              let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
-              scopeself.autos = respuesta["autos"];
-              const modalFormulario = Modal.getInstance(
-                document.getElementById("modalinsertAuto")
-              );
-              modalFormulario.hide();
-            })
-            .catch((error) => console.error("Error:", error));
-        });
+    getAuto: function (placa) {
+      this.updatePlaca = placa;
     },
-    updateAuto(placa) {
+    insertsubmit: async function (e) {
+      e.preventDefault();
       let scopeself = this;
-      document
-        .getElementById("formularioupdateAuto")
-        .addEventListener("submit", (e) => {
-          e.preventDefault();
-          const marca = document.getElementById("updateMarca").value;
-          const modelo = document.getElementById("updateModelo").value;
-          const color = document.getElementById("updateColor").value;
-          const data = {
-            placa: placa,
-            marca: marca,
-            modelo: modelo,
-            color: color,
-          };
-          fetch("http://localhost:5000/autos/update", {
-            method: "PATCH",
-            body: JSON.stringify(data),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-            .then((res) => res.json())
-            .then(async function () {
-              console.log(scopeself);
-              let idUsuario = scopeself.$store.state.user.id;
-              let token = scopeself.$store.state.user.token;
-              let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
-              scopeself.autos = respuesta["autos"];
-              const modalFormulario = Modal.getInstance(
-                document.getElementById("modalupdateAuto")
-              );
-              modalFormulario.hide();
-            })
-            .catch((error) => console.error("Error:", error));
-        });
+      const estado = "DIS";
+      const data = {
+        idUsuario: this.$store.state.user.id,
+        placa: this.insertPlaca,
+        marca: this.insertMarca,
+        modelo: this.insertModelo,
+        color: this.insertColor,
+        estado: estado,
+      };
+      fetch("http://localhost:5000/autos", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then(async function () {
+          let idUsuario = scopeself.$store.state.user.id;
+          let token = scopeself.$store.state.user.token;
+          let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+          scopeself.autos = respuesta["autos"];
+          if (respuesta["autos"].size() > 0) {
+            this.insertPlaca = "";
+            this.insertMarca = "";
+            this.insertModelo = "";
+            this.insertColor = "";
+            const modalFormulario = Modal.getInstance(
+              document.getElementById("modalinsertAuto")
+            );
+            modalFormulario.hide();
+          }
+        })
+        .catch((error) => console.error("Error:", error));
     },
+    updatesubmit: async function (e) {
+      e.preventDefault();
+      let scopeself = this;
+      const data = {
+        placa: this.updatePlaca,
+        marca: this.updateMarca,
+        modelo: this.updateModelo,
+        color: this.updateColor,
+      };
+      fetch("http://localhost:5000/autos", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then(async function () {
+          console.log(scopeself);
+          let idUsuario = scopeself.$store.state.user.id;
+          let token = scopeself.$store.state.user.token;
+          let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+          scopeself.autos = respuesta["autos"];
+          const modalFormulario = Modal.getInstance(
+            document.getElementById("modalupdateAuto")
+          );
+          modalFormulario.hide();
+        })
+        .catch((error) => console.error("Error:", error));
+    },
+
     deleteAuto(placa) {
       let scopeself = this;
       const data = {
         placa: placa,
       };
-      fetch("http://localhost:5000/autos/delete", {
+      fetch("http://localhost:5000/autos", {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {

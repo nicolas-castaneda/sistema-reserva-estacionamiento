@@ -17,18 +17,18 @@
       </thead>
       <tbody>
         <!-- Eliminar reserva -->
-        <tr v-for="reserva in reservas" :key="reserva.idReserva">
-          <td>{{ reserva.inicioReserva }}</td>
-          <td>{{ reserva.inicioReserva }}</td>
-          <td>{{ reserva.finReserva }}</td>
-          <td>{{ reserva.inicioReserva }}</td>
-          <td>{{ reserva.costoReserva }}</td>
-          <td>{{ reserva.costoTotal }}</td>
-          <td>{{ reserva.estadoRegistro }}</td>
-          <td v-if="reserva.estadoRegistro == 'PEN'">
+        <tr v-for="reserva in reservas" :key="reserva[0].idReserva">
+          <td>{{ reserva[2] }}</td>
+          <td>{{ reserva[0].inicioReserva }}</td>
+          <td>{{ reserva[0].finReserva }}</td>
+          <td>{{ reserva[1] }}</td>
+          <td>{{ reserva[0].costoReserva }}</td>
+          <td>{{ reserva[0].costoTotal }}</td>
+          <td>{{ reserva[0].estadoRegistro }}</td>
+          <td v-if="reserva[0].estadoRegistro == 'PEN'">
             <button
               class="btn btn-warning"
-              @click="deleteReserva(reserva.idReserva)"
+              @click="deleteReserva(reserva[0].idReserva)"
             >
               Anular
             </button>

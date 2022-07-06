@@ -166,9 +166,10 @@ def create_app(test_config=None):
             'total_autos':len(autos)
         })
 
-    @app.route("/autos/insert", methods=['POST'])
+    @app.route("/autos", methods=['POST'])
     def create_auto():
         data = request.get_json()
+        print(data)
         idUsuario = data.get('idUsuario', None)
         usuario = Usuario.query.filter_by(idUsuario=idUsuario).first()
         idUsuario = usuario.idUsuario
@@ -282,7 +283,7 @@ def create_app(test_config=None):
             'created':idReserva,
         })
 
-    @app.route("/autos/delete", methods=['DELETE'])
+    @app.route("/autos", methods=['DELETE'])
     def delete_auto():
         data = request.get_json()
         print(data)
@@ -301,15 +302,16 @@ def create_app(test_config=None):
             'deleted':placa,
         })
     
-    @app.route("/autos/update", methods=['PATCH'])
+    @app.route("/autos", methods=['PATCH'])
     def update_auto():
         data = request.get_json()
         print(data)
         if not data:
             abort(400, 'No se recibieron datos')
         placa = data.get('placa',None)
+        print(placa)
         if not placa:
-            abort(400, 'No se recibio un idAuto')
+            abort(400, 'No se recibio una placa')
         marca = data.get('marca',None)
         if msg:= v_marca(marca):
             abort(400, msg)
@@ -336,13 +338,13 @@ def create_app(test_config=None):
     @app.route("/reservas/<idUsuario>", methods=['GET'])
     @token_required
     def get_reservas(usuario):
-        print(usuario)
-        if usuario is None:
-            abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
-        reservas = Reserva.query.filter_by(idUsuario=idUsuario).order_by('idReserva').all()
-        print(reservas)
-        reservas = [reserva.format() for reserva in reservas]
+        Reservas = Reserva.query.filter_by(idUsuario=idUsuario).order_by('idReserva').all()
+        reservas = []
+        for reserva in Reservas:
+            auto = Auto.query.get(reserva.idAuto)
+            estacionamiento = Estacionamiento.query.get(reserva.idEstacionamiento)
+            reservas.append([reserva.format(), auto.placa, estacionamiento.lugar])
         print(reservas)
         return jsonify({
             'success':True,
