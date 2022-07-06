@@ -169,7 +169,7 @@ def create_app(test_config=None):
         idUsuario = data.get('idUsuario', None)
         usuario = Usuario.query.filter_by(idUsuario=idUsuario).first()
         idUsuario = usuario.idUsuario
-        if not idUsu:
+        if not idUsuario:
             abort(400, 'No se recibio un usuario')
         if not data:
             abort(400, 'No se recibieron datos')

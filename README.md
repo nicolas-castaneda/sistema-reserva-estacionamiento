@@ -12,18 +12,18 @@ El sistema de reserva de estacionamiento permite al usuario realizar reservas re
 
 ## Objetivos
 
-- Implementar el uso del framework Flask y entender sus funcionalidades para la creación de un aplicativo web.
+- Implementar el uso de los framework Flask y Vue para así entender sus funcionalidades para la creación de un aplicativo web.
 - Aprender sobre el desarrollo de un front-end a través de Javascript, HTML y CSS.
-- Automatizar un sistema que permita a un usuario registrar una reserva en un 	estacionamiento remotamente.
+- Automatizar un sistema que permita a un usuario registrar una reserva en un estacionamiento remotamente.
 
 ## Frameworks/plugins/librerías/base de datos
 
 ### Frameworks
 - Bootstrap: Framework de front-end que utiliza plantillas de diseño HTML y CSS usadas para la creación de páginas web.
 - Flask: Framework back-end de Python utilizado para el desarrollo de aplicaciones web.
+- Vue : Framework front-end utilizado para construir interfaces de usuario.
 ### Plugins
 - Flask-SQLAlchemy: Extensión de Flask que añade la funcionalidad de SQLAlchemy en una aplicación web de Flask.
-- Flask-Migrate: Extensión de Flask que maneja las migraciones de base de datos de aplicaciones web de Flask a través del uso de Alembic.
 ### Librerías
 -  Jquery: Librería de Javascript que simplifica la interacción con HTML, manejo de eventos, CSS y Ajax.
 - Werkzeug: Librería WSGI de aplicaciones web con variadas utilidades para su desarrollo.
@@ -67,6 +67,7 @@ Recibe el correo y la contraseña del formulario register de manera automatizada
 ### token_required
 - /session método: PATCH
 
+Verifica si el inicio de sesión de un usuario se mantiene activa.
 
 
 ### create_usuario
@@ -114,26 +115,7 @@ Filtra por idUsuario los datos de las reservas para posteriormente ser mostrada 
 
 Recibe un diccionario JSON con la información idReserva de una reserva. Retorna un JSON con la descripción en caso la reserva se haya eliminado correctamente o haya sucedido algún error.
 
-----------------------------------------------------------------------------------------------------------------------------
-### home
-- / método: GET
-
-Genera el contenido de la respuesta a partir del template home, el cual es el punto de partida de nuestra página.
-
-### logout
-- /logout/ método: GET 
-
-La variable **name** ,la cual va a contener el correo correspondiente del usuario, va a ser igualada a nulo. Por consiguiente, se va a redirigir a la pantalla principal.
-
-### recuperarAutoUsuario
-- /recuperarAutoUsuario/ método: POST
-
-Retorna un JSON con los correspondientes datos de cada auto del usuario, verificando que la variable **name** sea igual al correo. 
-
-### verificarEstado
-- /verificarEstado/ método: POST
-
-Retorna un JSON con el lugar de estacionamiento y su respectivo estado de registro.
+---------------------------------------------------------------------------------------------------------------------------
 
 ## Forma de autenticación
 
