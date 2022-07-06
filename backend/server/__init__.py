@@ -31,7 +31,6 @@ def token_required(f):
             'message': 'Expired token. Reauthentication required.',
             'authenticated': False
         }
-
         if len(auth_headers) != 2:
             abort(401, invalid_msg)
 
@@ -41,13 +40,12 @@ def token_required(f):
             user = Usuario.query.filter_by(correo=data['correo']).first()
             if not user:
                 abort(401, 'User not found')
-            return f(user)
         except jwt.ExpiredSignatureError:
             abort(401, expired_msg) # 401 is Unauthorized HTTP status code
         except (jwt.InvalidTokenError, Exception) as e:
             print(e)
             abort(401, invalid_msg)
-
+        return f(user, *args, **kwargs) 
     return _verify
 
 
@@ -154,8 +152,7 @@ def create_app(test_config=None):
 
     @app.route("/autos/<idUsuario>", methods=['GET'])
     @token_required
-    def get_autos(usuario):
-        print(usuario)
+    def get_autos(usuario, idUsuario):
         if usuario is None:
             abort(403,'Requiere cuenta para acceder a contenido')
         idUsuario = usuario.idUsuario
@@ -201,20 +198,17 @@ def create_app(test_config=None):
             abort(500)
         
     @app.route("/reserva", methods=['POST'])
-    def create_reserva():
+    @token_required
+    def create_reserva(usuario):
         data = request.get_json()
         if not data:
-            abort(400, 'No se recibieron datos')
+            return abort(400, 'No se recibieron datos')
 
-        usuario = Usuario.query.filter_by(correo=data.get('usuario',None)).first()
         idUsuario = usuario.idUsuario
-        if not idUsuario:
-            abort(400, 'No se recibio un usuario')
-        
 
         lugar=data.get('lugar', None)
         if msg:= v_lugar(lugar):
-                abort(400, msg)
+            return abort(400, msg)
 
         inicioReserva=data.get('inicioReserva',None)
         finReserva=data.get('finReserva',None)
@@ -226,7 +220,7 @@ def create_app(test_config=None):
         finReserva=str(datetimeFinReserva)
 
         if msg:= v_fecha(datetimeInicioReserva,datetimeFinReserva):
-            abort(400,msg)
+            return abort(400,msg)
 
         costoReserva=data.get('costoReserva',None)
         costoTotal=data.get('costoTotal',None)
@@ -236,16 +230,16 @@ def create_app(test_config=None):
         opcion = data.get('opcion', None)
         if opcion:
             if msg:= v_placa(placa):
-                abort(400, msg)
+                return abort(400, msg)
             marca = data.get('marca',None)
             if msg:= v_marca(marca):
-                abort(400, msg)
+                return abort(400, msg)
             modelo = data.get('modelo',None)
             if msg:= v_modelo(modelo):
-                abort(400, msg)
+                return abort(400, msg)
             color = data.get('color',None)
             if msg:= v_color(color):
-                abort(400, msg)
+                return abort(400, msg)
 
             auto=Auto(idUsuario, placa, marca, modelo, color, estado='NOD')
             auto.insert()
@@ -286,10 +280,8 @@ def create_app(test_config=None):
     @app.route("/autos", methods=['DELETE'])
     def delete_auto():
         data = request.get_json()
-        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
-        print(data)
         placa = data.get('placa',None)
         if not placa:
             abort(400, 'No se recibio un idAuto')
@@ -305,7 +297,6 @@ def create_app(test_config=None):
     @app.route("/autos", methods=['PATCH'])
     def update_auto():
         data = request.get_json()
-        print(data)
         if not data:
             abort(400, 'No se recibieron datos')
         placa = data.get('placa',None)
@@ -328,7 +319,6 @@ def create_app(test_config=None):
         auto.marca = marca
         auto.modelo = modelo
         auto.color = color
-        print(auto)
         auto.update()
         return jsonify({
             'success':True,

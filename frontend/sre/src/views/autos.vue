@@ -262,16 +262,10 @@ export default {
           let token = scopeself.$store.state.user.token;
           let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
           scopeself.autos = respuesta["autos"];
-          if (respuesta["autos"].size() > 0) {
-            this.insertPlaca = "";
-            this.insertMarca = "";
-            this.insertModelo = "";
-            this.insertColor = "";
-            const modalFormulario = Modal.getInstance(
-              document.getElementById("modalinsertAuto")
-            );
-            modalFormulario.hide();
-          }
+          const modalFormulario = Modal.getInstance(
+            document.getElementById("modalinsertAuto")
+          );
+          modalFormulario.hide();
         })
         .catch((error) => console.error("Error:", error));
     },
