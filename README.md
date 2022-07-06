@@ -54,17 +54,47 @@ Si quisiera usar una base de datos alojada, en esta aplicación puede cambiar la
 
 ## Endpoints
 
-### autos
-/autos/ método : GET
+### get_usuarios
+- /usuarios método : GET
+
+Obtiene los usuarios registrados en nuestra base de datos.
+
+### login
+- /session método: POST
+
+Recibe el correo y la contraseña del formulario register de manera automatizada. Para luego verificar que los datos ingresados coincidan con los datos existentes en la tabla Usuario. Se crea un token para garantizar que los datos sean válidos y seguros.
+
+### token_required
+- /session método: PATCH
+
+
+
+### create_usuario
+- /usuario método: POST
+
+Extrae información del contenido de un formulario de manera automatizada. Asimismo, informa al usuario si el contenido ingresado no cumple con los requisitos solicitado. Si la petición ha sido exitosa, redirigirá al usuario de maner automática a la página de login.
+
+### get_estacionamiento
+- /estacionamiento método: GET
+
+Retornará todos los lugares de reserva existentes en la base de datos **Estacionamiento**.
+### get_autos
+/autos/<idUsuario> método : GET
 
 Filtra por idUsuario los datos de los autos y los manda al frontend para mostrarlos de manera ordenada de acuerdo al idAuto.
 
-### insert_autos
-- /autos/insert/ método: POST
+### create_autos
+- /autos/insert método: POST
 
 Recibe un diccionario JSON con la información de placa, marca, modelo y color de un auto. Asimismo, halla el idUsuario del usuario que va insertar el auto. Verifica si la placa ya ha sido utilizada. Retorna un JSON con la descripción en caso se haya editado correctamente o el auto no es válido debido a la placa repetida.
 
-### delete_autos 
+### create_reserva
+
+- /reserva método: POST
+
+Recibe un diccionario JSON con la información necesaria para hacer una reserva, dentro de este puede incluir un nuevo diccionario JSON con la información necesario para añadir un auto si es que el usuario asi lo requiera.
+
+### delete_auto
 - /autos/delete/ método: POST
 
 Recibe un diccionario JSON con la información idAuto de un auto. Retorna un JSON con la descripción en caso el auto se haya eliminado correctamente o haya sucesido algún error. 
@@ -74,46 +104,26 @@ Recibe un diccionario JSON con la información idAuto de un auto. Retorna un JSO
 
 Recibe un diccionario JSON con la información de idAuto, marca, modelo y color de un auto. Los atributos que se pueden modificar son marca, modelo y color, ya que la placa es única para cada auto. El idAuto sirve para saber cual dato exactamente se va a modificar. Retorna un JSON con la descripción en caso se haya editado correctamente o haya sucedido algún error.
 
-### reservas
-- /reservas/ metodo: GET
+### get_reservas
+- /reservas/<idUsuario> metodo: GET
 
-Filtra por idUsuario los datos de las reservas y los manda al frontend para mostrarlos de manera ordenada de acuerdo a la idReserva.
+Filtra por idUsuario los datos de las reservas para posteriormente ser mostrada de forma ordena en el frontend.
 
 ### delete_reservas
 - /reservas/delete/ método: POST
 
 Recibe un diccionario JSON con la información idReserva de una reserva. Retorna un JSON con la descripción en caso la reserva se haya eliminado correctamente o haya sucedido algún error.
 
-### hello_word
+----------------------------------------------------------------------------------------------------------------------------
+### home
 - / método: GET
 
 Genera el contenido de la respuesta a partir del template home, el cual es el punto de partida de nuestra página.
-
-### register
-- /register/ método: GET, POST
-
-Extrae información del contenido de un formulario establecido en el template **register** de manera automatizada. Asimismo, informa al usuario si el contenido ingresado no cumple con los requisitos solicitado. Si la petición ha sido exitosa, redirigirá al usuario de maner automática a la página de login.
-
-
-### login
-- /login/ método: GET, POST
-
-Recibe el correo y la contraseña del formulario register de manera automatizada. Para luego verificar que los datos ingresados coincidan con los datos existentes en la tabla Usuario.
 
 ### logout
 - /logout/ método: GET 
 
 La variable **name** ,la cual va a contener el correo correspondiente del usuario, va a ser igualada a nulo. Por consiguiente, se va a redirigir a la pantalla principal.
-
-### principal
-- /principal/ método: GET
-
-Genera el contenido de respuesta a partir del template **principal**. Por lo tanto; mostrará todos los lugares de reserva existentes en la base de datos **Estacionamiento**.
-
-### procesarReserva
-- /procesarReserva/ método:POST
-
-Recibe un diccionario JSON con la información de placa, marca, modelo, color de un auto,auto disponible, costo de reserva y costo total. De igual manera, halla el idUsuario del usuario que va insertar en la tabla de reservas. Verifica si la placa ya ha sido utilizada, si el lugar se encuentre disponible y por último si la fecha ingresada es válida. Retorna un JSON con el lugar actualizado como no disponible.
 
 ### recuperarAutoUsuario
 - /recuperarAutoUsuario/ método: POST
