@@ -227,3 +227,6 @@ class TestSREApi(unittest.TestCase):
         self.assertEqual(res.status_code, 400)
         self.assertFalse(data['success'])
         self.assertIn('color', data['message'])
+
+    # PAGINA AUTOS
+

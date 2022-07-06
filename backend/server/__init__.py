@@ -166,11 +166,10 @@ def create_app(test_config=None):
     @app.route("/autos", methods=['POST'])
     def create_auto():
         data = request.get_json()
-        print(data)
         idUsuario = data.get('idUsuario', None)
         usuario = Usuario.query.filter_by(idUsuario=idUsuario).first()
         idUsuario = usuario.idUsuario
-        if not idUsuario:
+        if not idUsu:
             abort(400, 'No se recibio un usuario')
         if not data:
             abort(400, 'No se recibieron datos')
@@ -188,10 +187,11 @@ def create_app(test_config=None):
             abort(400, msg)
         try:
             auto = Auto(idUsuario=idUsuario,placa=placa, marca=marca, modelo=modelo, color=color, estado='DIS')
-            newAutoId = auto.insert()
+            newAutoPlaca = auto.insert()
             return jsonify({
                 'success':True,
-                'created':newAutoId,
+                'created': newAutoPlaca,
+                'message':'Auto creado'
             })
         except Exception as e:
             print(e)
@@ -292,6 +292,7 @@ def create_app(test_config=None):
         return jsonify({
             'success':True,
             'deleted':placa,
+            'message':'Auto eliminado'
         })
     
     @app.route("/autos", methods=['PATCH'])
@@ -322,12 +323,13 @@ def create_app(test_config=None):
         auto.update()
         return jsonify({
             'success':True,
-            'updated':placa
+            'updated':placa,
+            'message':'Auto actualizado'
         })
 
     @app.route("/reservas/<idUsuario>", methods=['GET'])
     @token_required
-    def get_reservas(usuario):
+    def get_reservas(usuario,idUsuario):
         idUsuario = usuario.idUsuario
         Reservas = Reserva.query.filter_by(idUsuario=idUsuario).order_by('idReserva').all()
         reservas = []
@@ -357,6 +359,7 @@ def create_app(test_config=None):
         return jsonify({
             'success':True,
             'deleted':idReserva,
+            'message':'Reserva eliminada'
         })
 
 
