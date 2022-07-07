@@ -272,6 +272,78 @@ class TestSREApi(unittest.TestCase):
         self.assertTrue(data['success'])
         self.assertEqual(data['message'], 'Auto creado')
 
+    def test_post_autos_failed_placa(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, os.getenv('POST_PASS'),
+        algorithm='HS256')
+
+        res=self.client().post("/autos", headers={"Authorization": "Bearer "+token,
+                                                    "Content-Type":"application/json"},
+                                                json={'marca': 'a','modelo': 'b', 'color': 'c'})
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertIn('placa', data['message'])
+    
+    def test_post_autos_failed_marca(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, os.getenv('POST_PASS'),
+        algorithm='HS256')
+
+        res=self.client().post("/autos", headers={"Authorization": "Bearer "+token,
+                                                    "Content-Type":"application/json"},
+                                                json={'placa': 'A7', 'modelo': 'b', 'color': 'c'})
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertIn('marca', data['message'])
+
+    def test_post_autos_failed_modelo(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, os.getenv('POST_PASS'),
+        algorithm='HS256')
+
+        res=self.client().post("/autos", headers={"Authorization": "Bearer "+token,
+                                                    "Content-Type":"application/json"},
+                                                json={'placa': 'A7','marca': 'a', 'color': 'c'})
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertIn('modelo', data['message'])
+
+    def test_post_autos_failed_color(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, os.getenv('POST_PASS'),
+        algorithm='HS256')
+
+        res=self.client().post("/autos", headers={"Authorization": "Bearer "+token,
+                                                    "Content-Type":"application/json"},
+                                                json={'placa': 'A7','marca': 'a', 'modelo': 'b'})
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertIn('color', data['message'])
+
     def test_patch_autos_success(self):
         token = jwt.encode({
             'id': '1',

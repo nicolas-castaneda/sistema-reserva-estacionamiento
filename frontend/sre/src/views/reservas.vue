@@ -70,7 +70,7 @@ export default {
         },
       })
         .then((response) => response.json())
-        .then(async function (response) {
+        .then(async function () {
           let idUsuario = scopeself.$store.state.user.id;
           let token = scopeself.$store.state.user.token;
           let respuesta = await reservas.getReservas(idUsuario, token);

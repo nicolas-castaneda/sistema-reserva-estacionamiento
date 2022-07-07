@@ -363,6 +363,9 @@ def create_app(test_config=None):
         lugar.estadoRegistro='DIS'
         lugar.update()
         reserva.delete()
+        auto = Auto.query.filter_by(idAuto=reserva.idAuto).first()
+        auto.estado = 'DIS'
+        auto.update()
         return jsonify({
             'success':True,
             'deleted':idReserva,
