@@ -59,7 +59,7 @@ class Auto(db.Model):
     modelo = db.Column(db.String(50), nullable = False)
     color = db.Column(db.String(50), nullable = False)
     estado = db.Column(db.String(3), nullable = False)
-    reserva = db.relationship("Reserva")
+    reserva = db.relationship("Reserva", cascade = "all,delete")
 
     def __init__(self, idUsuario,placa, marca, modelo, color, estado):
         self.idUsuario = idUsuario

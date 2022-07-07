@@ -134,7 +134,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
         
         res=self.client().post("/reserva", headers={"Authorization": "Bearer "+token, 
@@ -161,7 +161,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
         
         res=self.client().post("/reserva", headers={"Authorization": "Bearer "+token, 
@@ -187,7 +187,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
         
         res=self.client().post("/reserva", headers={"Authorization": "Bearer "+token, 
@@ -213,7 +213,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
         
         res=self.client().post("/reserva", headers={"Authorization": "Bearer "+token, 
@@ -240,7 +240,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         idUsuario = 1
@@ -248,7 +248,6 @@ class TestSREApi(unittest.TestCase):
         res=self.client().get("/autos/" + str(idUsuario), headers={"Authorization": "Bearer "+token,
                                                     "Content-Type":"application/json"})
         data = json.loads(res.data)
-        print(data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertTrue(data['autos'])
@@ -260,7 +259,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         res=self.client().post("/autos", headers={"Authorization": "Bearer "+token,
@@ -278,7 +277,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         updated_placa = 'A8'
@@ -297,7 +296,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         updated_placa = 'A6'
@@ -317,7 +316,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         deleted_placa = 'A8'
@@ -337,7 +336,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         deleted_placa = 'A6'
@@ -357,7 +356,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         idUsuario = 1
@@ -376,10 +375,10 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
-        deleted_id = 1
+        deleted_id = '1'
 
         res=self.client().delete("/reservas/" + str(deleted_id), headers={"Authorization": "Bearer "+token,
                                                         "Content-Type":"application/json"},
@@ -396,7 +395,7 @@ class TestSREApi(unittest.TestCase):
             'correo': 'a@a.com',
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=30)
-        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        }, os.getenv('POST_PASS'),
         algorithm='HS256')
 
         deleted_id = 2
