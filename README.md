@@ -179,7 +179,15 @@ pip3 install -r requirements.txt
 ### Ejecutar
 Para ejecutar la aplicación, se debe ejecutar el siguiente comando:
 
-- Para el backend:
+- Para el backend en linux:
+
+```{bash}
+export FLASK_APP=server
+export FLASK_ENV=development
+flask run
+```
+
+- Para el backend en Windows:
 
 ```{bash}
 $env:FLASK_APP='server'   
