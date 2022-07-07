@@ -18,6 +18,7 @@ import jwt
 import threading
 from datetime import datetime, timedelta
 from server.funciones import *
+import os
 
 def token_required(f):
     @wraps(f)
@@ -51,7 +52,7 @@ def token_required(f):
 
 def create_app(test_config=None):
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+    app.config['SECRET_KEY'] = os.getenv('POST_PASS')
     setup_db(app)
     #CORS(app, max_age=10)
     CORS(app)
@@ -167,7 +168,6 @@ def create_app(test_config=None):
     @token_required
     def create_auto(usuario):
         data = request.get_json()
-        print(data)
         idUsuario = data.get('idUsuario', None)
         idUsuario = usuario.idUsuario
         if not idUsuario:
@@ -281,10 +281,6 @@ def create_app(test_config=None):
     @app.route("/autos/<placa>", methods=['DELETE'])
     @token_required
     def delete_auto(usuario, placa):
-        data = request.get_json()
-        if not data:
-            abort(400, 'No se recibieron datos')
-        placa = data.get('placa',None)
         if not placa:
             abort(400, 'No se recibio un placa')
         auto = Auto.query.filter_by(placa=placa).first()
@@ -304,7 +300,6 @@ def create_app(test_config=None):
         if not data:
             abort(400, 'No se recibieron datos')
         placa = data.get('placa',None)
-        print(placa)
         if not placa:
             abort(400, 'No se recibio una placa')
         marca = data.get('marca',None)
@@ -340,7 +335,6 @@ def create_app(test_config=None):
             auto = Auto.query.get(reserva.idAuto)
             estacionamiento = Estacionamiento.query.get(reserva.idEstacionamiento)
             reservas.append([reserva.format(), auto.placa, estacionamiento.lugar])
-        print(reservas)
         return jsonify({
             'success':True,
             'reservas':reservas,
@@ -350,20 +344,16 @@ def create_app(test_config=None):
     @app.route("/reservas/<idReserva>", methods=['DELETE'])
     @token_required
     def delete_reserva(usuario, idReserva):
-        data = request.get_json()
-        if not data:
-            abort(400, 'No se recibieron datos')
-        idReserva = data.get('idReserva', None)
         if not idReserva:
             abort(400, 'No se recibio un idReserva')
         reserva = Reserva.query.filter_by(idReserva=idReserva).first()
         if not reserva:
-            abort(400, 'No se encontro la reserva')
+            abort(400 ,'No se encontro la reserva')
         lugar = Estacionamiento.query.filter_by(idEstacionamiento=reserva.idEstacionamiento).first()
-        lugar.estadoRegistro='DIS'
+        lugar.estadoRegistro = 'DIS'
         lugar.update()
         reserva.delete()
-        auto = Auto.query.filter_by(idAuto=reserva.idAuto).first()
+        auto = Auto.query.get(reserva.idAuto)
         auto.estado = 'DIS'
         auto.update()
         return jsonify({
