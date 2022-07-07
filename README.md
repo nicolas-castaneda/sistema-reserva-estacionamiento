@@ -18,13 +18,13 @@ El sistema de reserva de estacionamiento permite al usuario realizar reservas re
 
 ## Modelo Relacional
 
-![modelo](img/Entidad_relacion.jpeg =100x100)
+![modelo](img/Entidad_relacion.jpeg)
 
 ## Gráfico de estados
 
-![reserva](img/Reserva.jpeg =100x100)
+![reserva](img/Reserva.jpeg)
 ![auto](img/Auto.jpeg =100x100)
-![estacionamiento](img/Estacionamiento.jpeg =100x100)
+![estacionamiento](img/Estacionamiento.jpeg)
 
 ## Frameworks/plugins/librerías/base de datos
 
