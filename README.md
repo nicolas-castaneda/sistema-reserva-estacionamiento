@@ -169,6 +169,7 @@ El sistema solicita el correo y contraseña para iniciar una sesión en la aplic
 ### Requisitos
 - Python >= 3.8
 - Postgres >= 12
+- node.js 
 
 ### Preparar dependencias
 Al ser esta aplicación desarrollado en Flask, vamos a utilizar varias dependencias que estan señaladas en el archivo `requirements.txt`. Las puede instalar con el siguiente comando:
@@ -177,6 +178,16 @@ pip3 install -r requirements.txt
 ```
 ### Ejecutar
 Para ejecutar la aplicación, se debe ejecutar el siguiente comando:
+
+- Para el backend:
+
 ```{bash}
-python3 app.py
+$env:FLASK_APP='server'   
+$env:FLASK_env='development'
+flask run
+```
+- Para el frontend:
+
+```{bash}
+npm run serve
 ```
