@@ -3,6 +3,7 @@ import unittest
 from server import create_app
 from models import setup_db
 from datetime import datetime, timedelta
+from server.funciones import *
 
 import json
 import jwt
@@ -16,6 +17,10 @@ class TestSREApi(unittest.TestCase):
         self.database_path = 'postgresql://postgres:{}@localhost:5432/{}'.format(os.getenv('POST_PASS'), self.database_name)
         
         setup_db(self.app, self.database_path)
+
+        crear_auto()
+        crear_reserva()
+
     
     # Usuario
     def test_get_usuario(self):
@@ -229,4 +234,182 @@ class TestSREApi(unittest.TestCase):
         self.assertIn('color', data['message'])
 
     # PAGINA AUTOS
+    def test_get_autos_success(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        idUsuario = 1
+        
+        res=self.client().get("/autos/" + str(idUsuario), headers={"Authorization": "Bearer "+token,
+                                                    "Content-Type":"application/json"})
+        data = json.loads(res.data)
+        print(data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['autos'])
+        self.assertIsNotNone(len(data['autos']))
+
+    def test_post_autos_success(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        res=self.client().post("/autos", headers={"Authorization": "Bearer "+token,
+                                                    "Content-Type":"application/json"},
+                                                json={'placa': 'A7', 'marca': 'a', 'modelo': 'b', 'color': 'c'})
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['message'], 'Auto creado')
+
+    def test_patch_autos_success(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        updated_placa = 'A8'
+        res=self.client().patch("/autos/" + str(updated_placa), headers={"Authorization": "Bearer "+token,
+                                                        "Content-Type":"application/json"},
+                                                    json={'placa': 'A8','marca': 'a', 'modelo': 'b', 'color': 'c'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['updated'], updated_placa)
+        self.assertEqual(data['message'], 'Auto actualizado')
+
+    def test_patch_autos_failed_placa(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        updated_placa = 'A6'
+
+        res=self.client().patch("/autos/" + str(updated_placa), headers={"Authorization": "Bearer "+token,
+                                                        "Content-Type":"application/json"},
+                                                    json={'placa': 'A6','marca': 'a', 'modelo': 'b', 'color': 'c'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertIn(data['message'],'No se encontro el auto')
+
+
+    def test_delete_autos_success(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        deleted_placa = 'A8'
+
+        res=self.client().delete("/autos/" + str(deleted_placa), headers={"Authorization": "Bearer "+token,
+                                                        "Content-Type":"application/json"},
+                                                        json={'placa': 'A8'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['deleted'], deleted_placa)
+        self.assertEqual(data['message'], 'Auto eliminado')
+
+    def test_delete_autos_failed_placa(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        deleted_placa = 'A6'
+
+        res=self.client().delete("/autos/" + str(deleted_placa), headers={"Authorization": "Bearer "+token,
+                                                        "Content-Type":"application/json"},
+                                                        json={'placa': 'A6'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertIn(data['message'],'No se encontro el auto')
+
+    # PAGINA RESERVAS
+    def test_get_reservas_success(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        idUsuario = 1
+
+        res=self.client().get("/reservas/" + str(idUsuario), headers={"Authorization": "Bearer "+token,
+                                                    "Content-Type":"application/json"})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['reservas'])
+        self.assertIsNotNone(len(data['reservas']))
+        
+    def test_delete_reserva_success(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        deleted_id = 1
+
+        res=self.client().delete("/reservas/" + str(deleted_id), headers={"Authorization": "Bearer "+token,
+                                                        "Content-Type":"application/json"},
+                                                        json={'idReserva': 1})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['deleted'], deleted_id)
+        self.assertEqual(data['message'], 'Reserva eliminada')
+
+    def test_delete_reserva_failed_id(self):
+        token = jwt.encode({
+            'id': '1',
+            'correo': 'a@a.com',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)
+        }, '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf',
+        algorithm='HS256')
+
+        deleted_id = 2
+
+        res=self.client().delete("/reservas/" + str(deleted_id), headers={"Authorization": "Bearer "+token,
+                                                        "Content-Type":"application/json"},
+                                                        json={'idReserva': 2})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data['success'])
+        self.assertIn(data['message'],'No se encontro la reserva')
+
+
+
+
 

@@ -61,15 +61,16 @@ export default {
       const data = {
         idReserva: id,
       };
-      fetch("http://localhost:5000/reservas/delete", {
+      fetch("http://localhost:5000/reservas/" + id, {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
           "Content-Type": "application/json",
         },
       })
         .then((response) => response.json())
-        .then(async function () {
+        .then(async function (response) {
           let idUsuario = scopeself.$store.state.user.id;
           let token = scopeself.$store.state.user.token;
           let respuesta = await reservas.getReservas(idUsuario, token);

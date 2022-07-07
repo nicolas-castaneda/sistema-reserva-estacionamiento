@@ -155,3 +155,13 @@ def crear_persona():
     testPersona=Usuario("75330321", "985013664", "Marco Antonio", "a@a.com", generate_password_hash("1234"), "REG")
     db.session.add(testPersona)
     db.session.commit()
+
+def crear_auto():
+    testAuto=Auto(1,'A8','Toyota','Corolla','rojo', 'DIS')
+    db.session.add(testAuto)
+    db.session.commit()
+
+def crear_reserva():
+    testReserva=Reserva(1, 1, 1, '2023-05-16T20:57', '2023-05-17T23:57', 4.05, 81, 'DIS')
+    db.session.add(testReserva)
+    db.session.commit()

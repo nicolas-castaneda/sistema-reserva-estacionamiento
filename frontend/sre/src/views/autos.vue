@@ -6,6 +6,7 @@
       class="btn btn-primary"
       data-bs-toggle="modal"
       data-bs-target="#modalinsertAuto"
+      v-on:click="iniciarFormularioinsert()"
     >
       Crear
     </button>
@@ -34,11 +35,15 @@
               class="btn btn-success"
               data-bs-toggle="modal"
               data-bs-target="#modalupdateAuto"
-              v-on:click="getAuto(auto.placa)"
+              v-on:click="[getAuto(auto.placa), iniciarFormularioupdate()]"
             >
               Editar
             </button>
-            <button class="btn btn-warning" @click="deleteAuto(auto.placa)">
+            <button
+              v-if="auto.estado == 'DIS'"
+              class="btn btn-warning"
+              @click="deleteAuto(auto.placa)"
+            >
               Eliminar
             </button>
           </td>
@@ -201,6 +206,7 @@
           </div>
         </div>
       </div>
+      <Alert :error="error" v-if="!ok"></Alert>
     </div>
   </div>
 </template>
@@ -208,11 +214,14 @@
 <script>
 import * as autos from "../assets/autos/autos.js";
 import { Modal } from "bootstrap";
+import Alert from "../components/alert.vue";
 
 export default {
   name: "autos",
   data() {
     return {
+      error: null,
+      ok: false,
       idUsuario: this.$store.state.user.id,
       insertPlaca: "",
       insertMarca: "",
@@ -226,6 +235,9 @@ export default {
       autos: [],
     };
   },
+  components: {
+    Alert,
+  },
   async created() {
     let scopeself = this;
     let idUsuario = scopeself.$store.state.user.id;
@@ -237,8 +249,25 @@ export default {
     getAuto: function (placa) {
       this.updatePlaca = placa;
     },
+    iniciarFormularioinsert: function () {
+      this.ok = true;
+      this.error = null;
+      this.insertPlaca = "";
+      this.insertMarca = "";
+      this.insertModelo = "";
+      this.insertColor = "";
+    },
+    iniciarFormularioupdate: function () {
+      this.ok = true;
+      this.error = null;
+      this.updateMarca = "";
+      this.updateModelo = "";
+      this.updateColor = "";
+    },
     insertsubmit: async function (e) {
       e.preventDefault();
+      this.ok = false;
+      this.error = null;
       let scopeself = this;
       const estado = "DIS";
       const data = {
@@ -253,19 +282,30 @@ export default {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
           "Content-Type": "application/json",
         },
       })
         .then((res) => res.json())
-        .then(async function () {
-          let idUsuario = scopeself.$store.state.user.id;
-          let token = scopeself.$store.state.user.token;
-          let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
-          scopeself.autos = respuesta["autos"];
-          const modalFormulario = Modal.getInstance(
-            document.getElementById("modalinsertAuto")
-          );
-          modalFormulario.hide();
+        .then(async function (res) {
+          console.log(res);
+          if (res.success) {
+            scopeself.ok = true;
+            scopeself.insertPlaca = "";
+            scopeself.insertMarca = "";
+            scopeself.insertModelo = "";
+            scopeself.insertColor = "";
+            let idUsuario = scopeself.$store.state.user.id;
+            let token = scopeself.$store.state.user.token;
+            let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
+            scopeself.autos = respuesta["autos"];
+            const modalFormulario = Modal.getInstance(
+              document.getElementById("modalinsertAuto")
+            );
+            modalFormulario.hide();
+          } else {
+            scopeself.error = res.message;
+          }
         })
         .catch((error) => console.error("Error:", error));
     },
@@ -278,24 +318,32 @@ export default {
         modelo: this.updateModelo,
         color: this.updateColor,
       };
-      fetch("http://localhost:5000/autos", {
+      fetch("http://localhost:5000/autos/" + this.updatePlaca, {
         method: "PATCH",
         body: JSON.stringify(data),
         headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
           "Content-Type": "application/json",
         },
       })
         .then((res) => res.json())
-        .then(async function () {
+        .then(async function (res) {
           console.log(scopeself);
           let idUsuario = scopeself.$store.state.user.id;
           let token = scopeself.$store.state.user.token;
           let respuesta = await autos.obtenerAutoUsuario(idUsuario, token);
           scopeself.autos = respuesta["autos"];
-          const modalFormulario = Modal.getInstance(
-            document.getElementById("modalupdateAuto")
-          );
-          modalFormulario.hide();
+          if (res.success) {
+            scopeself.updateMarca = "";
+            scopeself.updateModelo = "";
+            scopeself.updateColor = "";
+            const modalFormulario = Modal.getInstance(
+              document.getElementById("modalupdateAuto")
+            );
+            modalFormulario.hide();
+          } else {
+            scopeself.error = res.message;
+          }
         })
         .catch((error) => console.error("Error:", error));
     },
@@ -305,10 +353,11 @@ export default {
       const data = {
         placa: placa,
       };
-      fetch("http://localhost:5000/autos", {
+      fetch("http://localhost:5000/autos/" + placa, {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {
+          Authorization: "Bearer " + this.$store.state.user.token,
           "Content-Type": "application/json",
         },
       })

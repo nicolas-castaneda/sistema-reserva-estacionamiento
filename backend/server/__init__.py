@@ -164,12 +164,13 @@ def create_app(test_config=None):
         })
 
     @app.route("/autos", methods=['POST'])
-    def create_auto():
+    @token_required
+    def create_auto(usuario):
         data = request.get_json()
+        print(data)
         idUsuario = data.get('idUsuario', None)
-        usuario = Usuario.query.filter_by(idUsuario=idUsuario).first()
         idUsuario = usuario.idUsuario
-        if not idUsu:
+        if not idUsuario:
             abort(400, 'No se recibio un usuario')
         if not data:
             abort(400, 'No se recibieron datos')
@@ -277,14 +278,15 @@ def create_app(test_config=None):
             'created':idReserva,
         })
 
-    @app.route("/autos", methods=['DELETE'])
-    def delete_auto():
+    @app.route("/autos/<placa>", methods=['DELETE'])
+    @token_required
+    def delete_auto(usuario, placa):
         data = request.get_json()
         if not data:
             abort(400, 'No se recibieron datos')
         placa = data.get('placa',None)
         if not placa:
-            abort(400, 'No se recibio un idAuto')
+            abort(400, 'No se recibio un placa')
         auto = Auto.query.filter_by(placa=placa).first()
         if not auto:
             abort(400, 'No se encontro el auto')
@@ -295,8 +297,9 @@ def create_app(test_config=None):
             'message':'Auto eliminado'
         })
     
-    @app.route("/autos", methods=['PATCH'])
-    def update_auto():
+    @app.route("/autos/<placa>", methods=['PATCH'])
+    @token_required
+    def update_auto(usuario, placa):
         data = request.get_json()
         if not data:
             abort(400, 'No se recibieron datos')
@@ -344,8 +347,9 @@ def create_app(test_config=None):
             'total_reservas':len(reservas)
         })
     
-    @app.route("/reservas/delete", methods=['DELETE'])
-    def delete_reserva():
+    @app.route("/reservas/<idReserva>", methods=['DELETE'])
+    @token_required
+    def delete_reserva(usuario, idReserva):
         data = request.get_json()
         if not data:
             abort(400, 'No se recibieron datos')
@@ -355,6 +359,9 @@ def create_app(test_config=None):
         reserva = Reserva.query.filter_by(idReserva=idReserva).first()
         if not reserva:
             abort(400, 'No se encontro la reserva')
+        lugar = Estacionamiento.query.filter_by(idEstacionamiento=reserva.idEstacionamiento).first()
+        lugar.estadoRegistro='DIS'
+        lugar.update()
         reserva.delete()
         return jsonify({
             'success':True,
