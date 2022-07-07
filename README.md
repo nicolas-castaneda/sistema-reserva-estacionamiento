@@ -16,6 +16,16 @@ El sistema de reserva de estacionamiento permite al usuario realizar reservas re
 - Aprender sobre el desarrollo de un front-end a través de Javascript, HTML y CSS.
 - Automatizar un sistema que permita a un usuario registrar una reserva en un estacionamiento remotamente.
 
+## Modelo Relacional
+
+![modelo](Entidad_relacion.jpeg)
+
+## Gráfico de estados
+
+![reserva](Reserva.jpeg)
+![auto](Auto.jpeg)
+![estacionamiento](Estacionamiento.jpeg)
+
 ## Frameworks/plugins/librerías/base de datos
 
 ### Frameworks
